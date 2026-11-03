@@ -158,7 +158,8 @@ table.t tr.cl:hover td{background:#fafbfd}
 .atb.on{border:2px solid #244380;color:#244380}
 .cfm .dur{display:flex;align-items:center;gap:8px}.cfm .dur b{font-weight:600}.cfm .dur .inp{min-width:0}
 .cfm .dtf{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px;cursor:pointer;padding:0 12px;white-space:nowrap}
-.cfm .dtf span{overflow:hidden;text-overflow:ellipsis}.cfm .dtf svg{flex:0 0 auto}
+.cfm .dtf{overflow-x:auto;scrollbar-width:none}.cfm .dtf::-webkit-scrollbar{display:none}
+.cfm .dtf span{flex:0 0 auto;white-space:nowrap}.cfm .dtf svg{flex:0 0 auto;position:sticky;right:0;margin-left:auto;background:inherit}
 .cfm .dtf.ro{background:#ebedf1;cursor:default}
 .cfm .dtf:focus{outline:none;border-color:var(--blue)}
 .lblrow{display:flex;align-items:center;justify-content:space-between}.lblrow label{margin-bottom:6px}
@@ -167,8 +168,10 @@ table.t tr.cl:hover td{background:#fafbfd}
 .tzi:focus .tzg{border-color:#244380;color:#244380;box-shadow:0 0 0 2px #c9d6f2}
 .tzt{display:none;position:absolute;right:0;top:26px;width:300px;max-width:80vw;background:#1f2937;color:#fff;border-radius:6px;padding:8px 12px;font-size:12.5px;line-height:1.4;font-weight:400;z-index:70;box-shadow:0 6px 16px rgba(0,0,0,.2)}
 .tzi:hover .tzt,.tzi:focus .tzt{display:block}
-.cfm .tzin{padding-right:190px;text-overflow:ellipsis}
-.tzov{position:absolute;right:34px;top:50%;transform:translateY(-50%);display:flex;gap:6px;pointer-events:none}
+.cfm .tzin{white-space:nowrap;text-overflow:clip}
+.tznote{margin-top:6px;font-size:12.5px;line-height:1.4;color:#7a5200;background:#fff6e0;border:1px solid #f1d9a0;border-radius:6px;padding:6px 10px}
+.tzt div+div{margin-top:6px}
+#vtip{position:fixed;z-index:300;max-width:380px;background:#1f2937;color:#fff;padding:6px 10px;border-radius:6px;font-size:12.5px;line-height:1.4;pointer-events:none;display:none;box-shadow:0 6px 16px rgba(0,0,0,.2)}
 .tzchip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;white-space:nowrap;flex:0 0 auto}
 .tzchip.tzlt{background:#e3edff;color:#244380}.tzchip.tzfo{background:#e2f4e6;color:#2d6a3a}
 .pdd .pdr .tzx{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:500;min-width:0;white-space:normal}
@@ -199,6 +202,9 @@ table.t tr.cl:hover td{background:#fafbfd}
 #demoTz label{display:flex;flex-direction:column;gap:4px;font-weight:600;color:#333}
 #demoTz select,#demoTz input{height:34px;border:1px solid #cfd5e2;border-radius:6px;font:inherit;font-size:13px;font-weight:400}
 #demoTz small{color:#6b7385}
+#demoTz label.dzc{flex-direction:row;align-items:center;gap:8px;font-weight:400}
+#demoTz .dzn{font-size:12px;color:#7a5200;background:#fff6e0;border-radius:6px;padding:4px 8px}
+#demoTz .dzn:empty{display:none}
 .cs{width:440px}
 .cs .hd{padding:18px 24px}.cs .hd h2{font-size:22px}
 .csh{padding:18px 24px 12px;border-bottom:1px solid var(--line)}
@@ -409,18 +415,25 @@ function seed(){
   return {id:'T'+a.no,title:a.title,type:a.type,dt:a.dt,tz,startLocal:a.dt,party:a.party,opp:a.opp,contacts:a.contacts,owner:a.owner,team:a.team,branch:br(a.owner),status:a.status,pri:a.pri,notes:a.notes,
    dir:a.dir,purpose:a.purpose,outcome:a.outcome,subj:a.subj,link:a.link,mtype:a.mtype,durH:a.dh,durM:a.dm,
    reminderOffsetMin:ri?(off==null?null:off):null,reminderLocal:a.rdt,reminderInstant:ri}});
- /* time-zone demo rows: Sara Khan's activities logged from other zones (instant order differs from displayed order) */
- const mine=leads.filter(l=>l.owner==ME).map(l=>l.name);
+ /* time-zone demo rows, dates from the real current date: D = today in the device zone, M = current month */
+ const mine=leads.filter(l=>l.owner==ME).map(l=>l.name),td=todayDev(),dz=machineTz(),pz=n=>String(n).padStart(2,'0');
+ const day=n=>{const [y,m,d]=td.split('-').map(Number),t=new Date(Date.UTC(y,m-1,d+n));return t.getUTCFullYear()+'-'+pz(t.getUTCMonth()+1)+'-'+pz(t.getUTCDate())};
+ const lastDay=(()=>{const [y,m]=td.split('-').map(Number),t=new Date(Date.UTC(y,m,0));return t.getUTCFullYear()+'-'+pz(t.getUTCMonth()+1)+'-'+pz(t.getUTCDate())})();
  const TZR=[
-  ['Rates call with Dhaka agent','Call','2026-10-20T10:00',mine[0],'Asia/Dhaka',15],
-  ['Chicago warehouse review','Meeting','2026-10-20T09:00',mine[1],'America/Chicago',30],
-  ['Kolkata customs follow-up','Task','2026-10-21T14:30',mine[2],'Asia/Kolkata',60],
-  ['Bangkok carrier negotiation','Call','2026-10-22T11:30',mine[3],'Asia/Bangkok',15],
-  ['London quote email','Email','2026-10-23T09:00',mine[0],'Europe/London',null],
-  ['London sync after clock change','Meeting','2026-10-27T10:00',mine[1],'Europe/London',1440]];
+  ['Rates call, Abu Dhabi office','Call',day(1)+'T10:15',mine[0],'Asia/Dubai',15],
+  ['Carrier negotiation, Bangkok','Call',day(2)+'T11:30',mine[1],'Asia/Bangkok',30],
+  ['Chicago warehouse review','Meeting',day(2)+'T17:00',mine[2],'America/Chicago',15],
+  ['Dhaka agent catch-up','Call',day(3)+'T02:00',mine[3],'Asia/Dhaka',null],
+  ['London quote email','Email',day(4)+'T09:00',mine[0],'Europe/London',null],
+  ['Honolulu partner call','Call',lastDay+'T23:30',mine[1],'Pacific/Honolulu',60]];
  TZR.forEach((a,i)=>{
   const st=wallClockToInstant(a[2],a[4]),ri=a[5]?new Date(Date.parse(st)-a[5]*6e4).toISOString():'';
   acts.push({id:'TZ'+(i+1),title:a[0],type:a[1],dt:a[2],tz:a[4],startLocal:a[2],startInstant:st,reminderOffsetMin:a[5],reminderLocal:ri?formatInZone(ri,a[4],'local'):'',reminderInstant:ri,party:a[3],opp:'',contacts:[],team:[],owner:ME,branch:'A',status:'In Progress',pri:'Low'});
+ });
+ /* legacy rows: no zone stored, only the instant (they follow the device zone) */
+ [['Legacy: follow-up call',day(1)+'T10:00'],['Legacy: document review',day(5)+'T14:30'],['Legacy: quotation check',day(-2)+'T16:00']].forEach((a,i)=>{
+  const st=wallClockToInstant(a[1],dz);
+  acts.push({id:'TL'+(i+1),title:a[0],type:['Call','Task','Email'][i],dt:a[1],tz:null,startLocal:a[1],startInstant:st,reminderOffsetMin:null,reminderLocal:'',reminderInstant:'',party:mine[i],opp:'',contacts:[],team:[],owner:ME,branch:'A',status:'In Progress',pri:'Low'});
  });
  return {leads,opps,contacts,acts};
 }
@@ -509,7 +522,7 @@ const COLDEFS={
  acts:[
   {k:'title',t:'Title',v:r=>r.title,link:1,w:260},
   {k:'type',t:'Activity Type',v:r=>r.type,h:r=>`<span class="pill" style="background:${typeClr[r.type][0]}">${typeClr[r.type][1]} ${r.type}</span>`},
-  {k:'tz',t:'Time Zone',w:220,v:r=>tzCell(r),sv:r=>actTz(r)},
+  {k:'tz',t:'Time Zone',w:320,v:r=>tzCell(r),sv:r=>String(zoneIdx(r.tz?zoneById(r.tz).id:devEntry().id)).padStart(3,'0')},
   {k:'date',t:'Activity Date',w:380,v:r=>formatInZone(actInst(r),actTz(r),'full'),sv:r=>actInst(r)},
   {k:'rem',t:'Reminder Date & Time',w:380,v:r=>r.reminderInstant?formatInZone(r.reminderInstant,actTz(r),'full'):'',sv:r=>r.reminderInstant||'9999'},
   {k:'status',t:'Activity Status',v:r=>r.status,h:r=>pill(r.status,r.status=='Completed'?'#6b7280':'#4bb87a')},
@@ -538,16 +551,139 @@ const LD={
  leads:{title:'Leads',create:'Create Lead',ph:'Search Leads...',data:'leads',fav:1,dt:r=>r.d,star:1},
  opps:{title:'Opportunities',create:'Create Opportunity',ph:'Search Opportunities',data:'opps',mine:1,dt:r=>r.d},
  contacts:{title:'Contacts',create:'Create Contact',ph:'Search Contacts',data:'contacts',dt:r=>r.d},
- acts:{title:'Activities',create:'Create Activity',ph:'Search Activities',data:'acts',mine:1,tabs:1,dt:r=>r.dt.slice(0,10)}
+ acts:{title:'Activities',create:'Create Activity',ph:'Search Activities',data:'acts',mine:1,tabs:1,dt:r=>actLocal(r).slice(0,10)}
 };
 const KIND={leads:'lead',opps:'opp',contacts:'contact',acts:'act'};
 /* ============ state ============ */
 /* ============ Time zone support (Create Activity) ============ */
 const FOS_SYSTEM_TZ='Asia/Kolkata'; // stands in for the user's System Preferred Time Zone (User Settings)
 const SHOW_DEMO_CONTROLS=true;      // false hides the prototype controls panel
-const DEMO={machine:'',fos:'',now:''};
-const machineTz=()=>DEMO.machine||Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';
-const fosTz=()=>DEMO.fos||FOS_SYSTEM_TZ;
+const DEMO={machine:'',fos:'',now:'',simUnavail:false,forceFos:false};
+// KNOWN LIMITATION (not handled): label offsets are static. Some rows (Amman, Minsk, Almaty/Novosibirsk, Astana/Dhaka, Greenland, Chihuahua/Mazatlan, Casablanca) and every DST zone can differ from the real offset on some dates. Conversions always use the IANA id.
+const ZONES=[
+ ["(GMT-12:00) International Date Line West", "Etc/GMT+12", []],
+ ["(GMT-11:00) Midway Island, Samoa", "Pacific/Pago_Pago", ["Pacific/Midway", "Pacific/Samoa"]],
+ ["(GMT-10:00) Hawaii", "Pacific/Honolulu", []],
+ ["(GMT-09:00) Alaska", "America/Anchorage", []],
+ ["(GMT-08:00) Pacific Time (US & Canada)", "America/Los_Angeles", []],
+ ["(GMT-08:00) Tijuana, Baja California", "America/Tijuana", []],
+ ["(GMT-07:00) Arizona", "America/Phoenix", []],
+ ["(GMT-07:00) Chihuahua, La Paz, Mazatlan", "America/Mazatlan", ["America/Chihuahua"]],
+ ["(GMT-07:00) Mountain Time (US & Canada)", "America/Denver", []],
+ ["(GMT-06:00) Central America", "America/Guatemala", []],
+ ["(GMT-06:00) Central Time (US & Canada)", "America/Chicago", []],
+ ["(GMT-06:00) Guadalajara, Mexico City, Monterrey", "America/Mexico_City", []],
+ ["(GMT-06:00) Saskatchewan", "America/Regina", []],
+ ["(GMT-05:00) Bogota, Lima, Quito, Rio Branco", "America/Bogota", []],
+ ["(GMT-05:00) Eastern Time (US & Canada)", "America/New_York", []],
+ ["(GMT-05:00) Indiana (East)", "America/Indiana/Indianapolis", ["America/Indianapolis"]],
+ ["(GMT-04:00) Atlantic Time (Canada)", "America/Halifax", []],
+ ["(GMT-04:00) Caracas, La Paz", "America/Caracas", []],
+ ["(GMT-04:00) Manaus", "America/Manaus", []],
+ ["(GMT-04:00) Santiago", "America/Santiago", []],
+ ["(GMT-03:30) Newfoundland", "America/St_Johns", []],
+ ["(GMT-03:00) Brasilia", "America/Sao_Paulo", []],
+ ["(GMT-03:00) Buenos Aires, Georgetown", "America/Argentina/Buenos_Aires", ["America/Buenos_Aires"]],
+ ["(GMT-03:00) Greenland", "America/Godthab", ["America/Nuuk"]],
+ ["(GMT-03:00) Montevideo", "America/Montevideo", []],
+ ["(GMT-02:00) Mid-Atlantic", "Atlantic/South_Georgia", []],
+ ["(GMT-01:00) Cape Verde Is.", "Atlantic/Cape_Verde", []],
+ ["(GMT-01:00) Azores", "Atlantic/Azores", []],
+ ["(GMT+00:00) Casablanca, Monrovia, Reykjavik", "Atlantic/Reykjavik", ["Africa/Casablanca", "Africa/Monrovia"]],
+ ["(GMT+00:00) Greenwich Mean Time : Dublin, Edinburgh, Lisbon, London", "Europe/London", ["Europe/Dublin", "Europe/Lisbon", "UTC", "Etc/UTC", "GMT"]],
+ ["(GMT+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna", "Europe/Berlin", []],
+ ["(GMT+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague", "Europe/Budapest", []],
+ ["(GMT+01:00) Brussels, Copenhagen, Madrid, Paris", "Europe/Paris", []],
+ ["(GMT+01:00) Sarajevo, Skopje, Warsaw, Zagreb", "Europe/Warsaw", []],
+ ["(GMT+01:00) West Central Africa", "Africa/Lagos", []],
+ ["(GMT+02:00) Amman", "Asia/Amman", []],
+ ["(GMT+02:00) Athens, Bucharest, Istanbul", "Europe/Athens", []],
+ ["(GMT+02:00) Beirut", "Asia/Beirut", []],
+ ["(GMT+02:00) Cairo", "Africa/Cairo", []],
+ ["(GMT+02:00) Harare, Pretoria", "Africa/Johannesburg", []],
+ ["(GMT+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius", "Europe/Kiev", ["Europe/Kyiv"]],
+ ["(GMT+02:00) Jerusalem", "Asia/Jerusalem", []],
+ ["(GMT+02:00) Minsk", "Europe/Minsk", []],
+ ["(GMT+02:00) Windhoek", "Africa/Windhoek", []],
+ ["(GMT+03:00) Kuwait, Riyadh, Baghdad", "Asia/Riyadh", []],
+ ["(GMT+03:00) Moscow, St. Petersburg, Volgograd", "Europe/Moscow", []],
+ ["(GMT+03:00) Nairobi", "Africa/Nairobi", []],
+ ["(GMT+03:00) Tbilisi", "Asia/Tbilisi", []],
+ ["(GMT+03:30) Tehran", "Asia/Tehran", []],
+ ["(GMT+04:00) Abu Dhabi, Muscat", "Asia/Dubai", []],
+ ["(GMT+04:00) Baku", "Asia/Baku", []],
+ ["(GMT+04:00) Yerevan", "Asia/Yerevan", []],
+ ["(GMT+04:30) Kabul", "Asia/Kabul", []],
+ ["(GMT+05:00) Yekaterinburg", "Asia/Yekaterinburg", []],
+ ["(GMT+05:00) Islamabad, Karachi, Tashkent", "Asia/Karachi", []],
+ ["(GMT+05:30) Chennai, Kolkata, Mumbai, New Delhi", "Asia/Kolkata", ["Asia/Calcutta"]],
+ ["(GMT+05:30) Sri Jayawardenapura", "Asia/Colombo", []],
+ ["(GMT+05:45) Kathmandu", "Asia/Kathmandu", ["Asia/Katmandu"]],
+ ["(GMT+06:00) Almaty, Novosibirsk", "Asia/Almaty", []],
+ ["(GMT+06:00) Astana, Dhaka", "Asia/Dhaka", []],
+ ["(GMT+06:30) Yangon (Rangoon)", "Asia/Yangon", ["Asia/Rangoon"]],
+ ["(GMT+07:00) Bangkok, Hanoi, Jakarta", "Asia/Bangkok", ["Asia/Saigon", "Asia/Ho_Chi_Minh", "Asia/Jakarta"]],
+ ["(GMT+07:00) Krasnoyarsk", "Asia/Krasnoyarsk", []],
+ ["(GMT+08:00) Beijing, Chongqing, Hong Kong, Urumqi", "Asia/Shanghai", ["Asia/Hong_Kong"]],
+ ["(GMT+08:00) Kuala Lumpur, Singapore", "Asia/Singapore", ["Asia/Kuala_Lumpur"]],
+ ["(GMT+08:00) Irkutsk, Ulaan Bataar", "Asia/Irkutsk", []],
+ ["(GMT+08:00) Perth", "Australia/Perth", []],
+ ["(GMT+08:00) Taipei", "Asia/Taipei", []],
+ ["(GMT+09:00) Osaka, Sapporo, Tokyo", "Asia/Tokyo", []],
+ ["(GMT+09:00) Seoul", "Asia/Seoul", []],
+ ["(GMT+09:00) Yakutsk", "Asia/Yakutsk", []],
+ ["(GMT+09:30) Adelaide", "Australia/Adelaide", []],
+ ["(GMT+09:30) Darwin", "Australia/Darwin", []],
+ ["(GMT+10:00) Brisbane", "Australia/Brisbane", []],
+ ["(GMT+10:00) Canberra, Melbourne, Sydney", "Australia/Sydney", []],
+ ["(GMT+10:00) Hobart", "Australia/Hobart", []],
+ ["(GMT+10:00) Guam, Port Moresby", "Pacific/Port_Moresby", ["Pacific/Guam"]],
+ ["(GMT+10:00) Vladivostok", "Asia/Vladivostok", []],
+ ["(GMT+11:00) Magadan, Solomon Is., New Caledonia", "Asia/Magadan", []],
+ ["(GMT+12:00) Auckland, Wellington", "Pacific/Auckland", []],
+ ["(GMT+12:00) Fiji, Kamchatka, Marshall Is.", "Pacific/Fiji", []],
+ ["(GMT+13:00) Nuku'alofa", "Pacific/Tongatapu", []]
+].map(z=>({label:z[0],id:z[1],al:z[2]}));
+const zoneIdx=id=>ZONES.findIndex(z=>z.id==id);
+const _near={};
+/* {entry, near}: exact id/alias match, else the first entry with the same Jan 1 + Jul 1 offsets, else the same offset today */
+function zoneLookup(id){
+ let e=ZONES.find(z=>z.id==id||z.al.includes(id));if(e)return {entry:e,near:false};
+ try{
+  const y=new Date().getFullYear(),jan=Date.UTC(y,0,1),jul=Date.UTC(y,6,1),a=tzOffsetMin(jan,id),b=tzOffsetMin(jul,id);
+  e=ZONES.find(z=>tzOffsetMin(jan,z.id)==a&&tzOffsetMin(jul,z.id)==b);
+  if(!e){const n=tzOffsetMin(Date.now(),id);e=ZONES.find(z=>tzOffsetMin(Date.now(),z.id)==n)}
+  if(e){if(!_near[id]){_near[id]=1;console.warn('Time zone '+id+' is not in the FOS list. Nearest match used: '+e.label)}return {entry:e,near:true}}
+ }catch(x){}
+ return {entry:ZONES[zoneIdx('Asia/Kolkata')],near:true};
+}
+const entryForIana=id=>zoneLookup(id).entry;
+const zoneById=id=>ZONES.find(z=>z.id==id)||entryForIana(id);
+const fosEntry=()=>entryForIana(DEMO.fos||FOS_SYSTEM_TZ);
+let _gdz=null,_gdzK='';
+/* { id, entry, source }: 'browser' (Intl), else 'offset' (getTimezoneOffset), else 'fos' */
+function getDeviceZone(){
+ const k=[DEMO.machine,DEMO.fos,DEMO.simUnavail,DEMO.forceFos].join('|');
+ if(_gdz&&k==_gdzK)return _gdz;
+ const ok=id=>{try{new Intl.DateTimeFormat(undefined,{timeZone:id});return true}catch(e){return false}};
+ let r=null;
+ if(!DEMO.simUnavail){
+  let id=DEMO.machine;
+  if(!id){try{id=Intl.DateTimeFormat().resolvedOptions().timeZone}catch(e){}}
+  if(id&&ok(id)){const z=zoneLookup(id);r={id,entry:z.entry,near:z.near,source:'browser'}}
+ }
+ if(!r&&!DEMO.forceFos){
+  const y=new Date().getFullYear(),jan=-new Date(y,0,1).getTimezoneOffset(),jul=-new Date(y,6,1).getTimezoneOffset();
+  let e=ZONES.find(z=>tzOffsetMin(Date.UTC(y,0,1),z.id)==jan&&tzOffsetMin(Date.UTC(y,6,1),z.id)==jul);
+  if(!e){const n=-new Date().getTimezoneOffset();e=ZONES.find(z=>tzOffsetMin(Date.now(),z.id)==n)}
+  if(e){console.warn('Device time zone unavailable. Nearest match used: '+e.label);r={id:e.id,entry:e,near:true,source:'offset'}}
+ }
+ if(!r){const f=fosEntry();r={id:f.id,entry:f,near:false,source:'fos'}}
+ _gdzK=k;return _gdz=r;
+}
+const machineTz=()=>getDeviceZone().id;
+const devEntry=()=>getDeviceZone().entry;
+const fosTz=()=>fosEntry().id;
 const nowMs=()=>DEMO.now?Date.parse(wallClockToInstant(DEMO.now,machineTz())):Date.now();
 const _dtf={},_dtn={};
 const dtf=tz=>_dtf[tz]||(_dtf[tz]=new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}));
@@ -581,16 +717,14 @@ function tzName(tz,ms){
  const f=_dtn[tz]||(_dtn[tz]=new Intl.DateTimeFormat('en-US',{timeZone:tz,timeZoneName:'long'}));
  const p=f.formatToParts(new Date(ms)).find(x=>x.type=='timeZoneName');return p?p.value:tz;
 }
-const tzLabel=(tz,ms)=>`(${gmtStr(tzOffsetMin(ms,tz))}) ${tzName(tz,ms)} (${tz})`;
-const tzCell=r=>{const tz=actTz(r);return `(${gmtStr(tzOffsetMin(Date.parse(actInst(r)),tz))}) ${tz}`};
-const actTz=r=>r.tz||'Asia/Dhaka';
-const actInst=r=>r.startInstant||(r.startInstant=wallClockToInstant(r.dt,actTz(r)));
-let _zones=null;
-function allZones(){
- if(!_zones){let z=[];try{z=Intl.supportedValuesOf('timeZone')}catch(e){}
-  if(!z.includes('UTC'))z.push('UTC');_zones=z}
- return _zones;
-}
+const tzCell=r=>r.tz?zoneById(r.tz).label:devEntry().label;
+const actTz=r=>r.tz||machineTz();
+const actInst=r=>r.startInstant||(r.startInstant=wallClockToInstant(r.startLocal||r.dt,actTz(r)));
+const actLocal=r=>r.tz?(r.startLocal||r.dt):formatInZone(actInst(r),machineTz(),'local');
+const actRemLocal=r=>r.reminderInstant?(r.tz&&r.reminderLocal?r.reminderLocal:formatInZone(r.reminderInstant,actTz(r),'local')):'';
+const addMin=(l,n)=>{const m=/^(\d+)-(\d+)-(\d+)T(\d+):(\d+)/.exec(l),t=new Date(Date.UTC(+m[1],+m[2]-1,+m[3],+m[4],+m[5]+n)),p=x=>String(x).padStart(2,'0');return `${t.getUTCFullYear()}-${p(t.getUTCMonth()+1)}-${p(t.getUTCDate())}T${p(t.getUTCHours())}:${p(t.getUTCMinutes())}`};
+/* a wall-clock time inside a DST gap moves forward to the next valid minute */
+function normLocal(l,tz){if(!l)return l;let x=l;for(let i=0;i<=180;i++){if(formatInZone(wallClockToInstant(x,tz),tz,'local')==x)return x;x=addMin(x,1)}return l}
 function nextSlot(tz){
  const w=formatInZone(nowMs(),tz,'local'),m=/^(\d+)-(\d+)-(\d+)T(\d+):(\d+)/.exec(w);
  let [y,mo,d,h,mi]=m.slice(1).map(Number);
@@ -598,7 +732,8 @@ function nextSlot(tz){
  const t=new Date(Date.UTC(y,mo-1,d,h,mi)),p=n=>String(n).padStart(2,'0');
  return `${t.getUTCFullYear()}-${p(t.getUTCMonth()+1)}-${p(t.getUTCDate())}T${p(t.getUTCHours())}:${p(t.getUTCMinutes())}`;
 }
-const tzChips=tz=>{const a=[];if(tz==machineTz())a.push('Local Time');if(tz==fosTz())a.push('FOS TIME');return a};
+const tzChips=tz=>{const a=[];if(tz==devEntry().id)a.push('Local Time');if(tz==fosEntry().id)a.push('FOS TIME');return a};
+const todayDev=()=>formatInZone(nowMs(),machineTz(),'local').slice(0,10);
 const chipHTML=a=>a.map(c=>`<span class="tzchip ${c=='Local Time'?'tzlt':'tzfo'}">${c}</span>`).join('');
 const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const TODAY=ymd(new Date());
@@ -607,13 +742,13 @@ const fmtD=s=>{const [y,m,d]=s.split('-');return `${+m}/${+d}/${y}`};
 const MONF=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const PRESETS=[['month','This Month - As of this month'],['today','This Month - As of today'],['last','Last Month'],['two','This Two Months'],['quarter','This Quarter'],['lquarter','Last Quarter']];
 function presetRange(k){
- const t=pd(TODAY),y=t.getFullYear(),m=t.getMonth(),q=Math.floor(m/3)*3,R=(a,b)=>[ymd(a),ymd(b)];
+ const t=pd(todayDev()),y=t.getFullYear(),m=t.getMonth(),q=Math.floor(m/3)*3,R=(a,b)=>[ymd(a),ymd(b)];
  return k=='month'?R(new Date(y,m,1),new Date(y,m+1,0)):k=='today'?R(new Date(y,m,1),t):k=='last'?R(new Date(y,m-1,1),new Date(y,m,0)):k=='two'?R(new Date(y,m-1,1),new Date(y,m+1,0)):k=='quarter'?R(new Date(y,q,1),new Date(y,q+3,0)):R(new Date(y,q-3,1),new Date(y,q,0));
 }
 const defRange=()=>{const t=pd(TODAY);return {k:'custom',a:ymd(new Date(t.getFullYear(),t.getMonth(),t.getDate()-30)),b:TODAY}};
 let S,T={};
 const $=id=>document.getElementById(id);
-function newL(k){return {sel:[S?S.lb:'A'],q:'',cf:{},sort:k=='acts'?{k:'date',dir:'asc'}:null,page:1,size:10,fav:false,rng:defRange(),mine:false,tab:'all'}}
+function newL(k){return {sel:[S?S.lb:'A'],q:'',cf:{},sort:k=='acts'?{k:'date',dir:'asc'}:null,page:1,size:10,fav:false,rng:k=='acts'?(()=>{const [a,b]=presetRange('month');return {k:'month',a,b}})():defRange(),mine:false,tab:'all'}}
 function newCols(){const c={};['leads','opps','contacts','acts'].forEach(k=>c[k]={order:['branch',...COLDEFS[k].map(x=>x.k)],hidden:{}});['desig','dept','phone2','source','mby','mdate'].forEach(k=>c.contacts.hidden[k]=true);c.oppsEmb={order:COLDEFS.oppsEmb.map(x=>x.k),hidden:{}};return c}
 function init(keep){
  const ui=keep?{roleOff:S.roleOff,calAB:S.calAB}:{roleOff:false,calAB:true};
@@ -809,6 +944,10 @@ function doAct(kind,id,a,fromCal){
   if(br!==S.lb){toast(MSG_BLOCK,'r');return}
   openContactForm('edit',id);return
  }
+ if(kind=='act'&&(a=='Edit'||a=='Duplicate')){
+  if(br!==S.lb){toast(MSG_BLOCK,'r');return}
+  openActivityForm(a=='Edit'?'edit':'dup',id);return
+ }
  if(guard(br,a+' '+LBL[kind])&&kind=='lead'&&(a=='Deactivate'||a=='Activate')){r.status=a=='Deactivate'?'Inactive':'Active';render()}
 }
 /* ============ Column Settings drawer ============ */
@@ -873,7 +1012,7 @@ function cfRender(){const b=document.querySelector('.dr .bd'),t=b?b.scrollTop:0;
 const CFM=()=>S.cform||S.aform;
 function cbField(id){
  const c=CFM(),f=CBF[id],v=f.disp?f.disp(c):f.get(c);
- return `<div class="pcb"><input class="inp${f.tzField?' tzin':''}" id="cb_${id}" placeholder="${f.ph}" autocomplete="off" value="${esc(v)}" title="${f.tzField?esc(v):''}" onfocus="cbOpen('${id}',1)" onclick="cbOpen('${id}',1)" oninput="cbInput('${id}',this.value)" onkeydown="cbKey(event,'${id}')" onblur="cbBlur('${id}')">${f.tzField?`<span class="tzov" id="tzov">${chipHTML(tzChips(c.tz))}</span>`:''}${f.clr?`<button class="cclr" id="cbx_${id}" style="${v?'':'display:none'}" onmousedown="event.preventDefault();cbClear('${id}')">✕</button>`:''}${CARET}<div id="cbw_${id}"></div></div>`;
+ return `<div class="pcb"><input class="inp${f.tzField?' tzin':''}" id="cb_${id}" placeholder="${f.ph}" autocomplete="off" value="${esc(v)}" ${f.tzField?`data-vt="${esc(v)}"`:''} onfocus="cbOpen('${id}',1)" onclick="cbOpen('${id}',1)" oninput="cbInput('${id}',this.value)" onkeydown="cbKey(event,'${id}')" onblur="cbBlur('${id}')">${f.clr?`<button class="cclr" id="cbx_${id}" style="${v?'':'display:none'}" onmousedown="event.preventDefault();cbClear('${id}')">✕</button>`:''}${CARET}<div id="cbw_${id}"></div></div>`;
 }
 function cbChipsHTML(id){const c=CFM();return CBF[id].get(c).map(n=>`<span class="mch"><i onmousedown="event.preventDefault();cbRemove('${id}','${escJS(n)}')">✕</i>${esc(n)}</span>`).join('')}
 function cbMulti(id){
@@ -919,7 +1058,7 @@ function cbSync(id){
  if(id=='party'){const x=$('cbx_party');if(x)x.style.display=c.party?'':'none';return}
  const f=CBF[id];
  if(f.multi){el.value='';return}
- const v=f.disp?f.disp(c):f.get(c);el.value=v;if(f.tzField){el.title=v;const o=$('tzov');if(o)o.innerHTML=chipHTML(tzChips(c.tz))}
+ const v=f.disp?f.disp(c):f.get(c);el.value=v;if(f.tzField)el.setAttribute('data-vt',v);
  const x=$('cbx_'+id);if(x)x.style.display=v?'':'none';
 }
 function cbClose(id){const c=CFM();if(!c||!id)return;if(c.cbId==id)c.cbId=null;const w=$('cbw_'+id);if(w)w.innerHTML='';cbSync(id)}
@@ -928,13 +1067,14 @@ function cbOpen(id,sel){
  if(c.cbId)cbClose(c.cbId);
  c.cbId=id;c.cbQ='';c.cbIdx=0;
  if(id!='party'&&!CBF[id].multi){const cur=CBF[id].get(c),i=cbItems(id).findIndex(x=>x.name==cur);c.cbIdx=Math.max(0,i)}
- if(sel){const el=$('cb_'+id);setTimeout(()=>el&&el.select(),0)}
+ if(sel){const el=$('cb_'+id);if(el)el.select();setTimeout(()=>el&&el.select(),0)}
  cbRefresh(id,true);
 }
 function cbInput(id,v){
  const c=CFM();if(!c)return;
  if(c.cbId!=id){c.cbId=id}
  c.cbQ=v;c.cbIdx=0;
+ if(CBF[id]&&CBF[id].tzField&&!v.trim()){const i=cbItems(id).findIndex(x=>x.name==c.tz);c.cbIdx=Math.max(0,i)}
  if(id=='party'){
   c.party=v.slice(0,100);c.partySel=false;delete c.errs.party;
   if(c.isNewLead&&!c.party.trim()){c.isNewLead=false;c.nl=NL0();c.cbId=null;cfRender();const el=$('cb_party');if(el)el.focus();return}
@@ -1057,11 +1197,22 @@ const REM_MIN={'5 Minutes':5,'10 Minutes':10,'15 Minutes':15,'30 Minutes':30,'1 
 const A_STATUS=['New','In Progress','Follow Up','Completed','Rescheduled','Cancelled','Overdue'];
 const A_PRI=['Medium','High','Low','Critical'];
 const A_OUT={Call:CRMDB.lists.act['Outcome (Call)'],Email:CRMDB.lists.act['Outcome (Email)'],Meeting:CRMDB.lists.act['Outcome(Meeting)'],Task:[]};
-function openActivityForm(){
- const tz=machineTz();
+const remLabel=r=>{if(!r.reminderInstant)return 'No Reminder';const off=Math.round((Date.parse(actInst(r))-Date.parse(r.reminderInstant))/6e4);return Object.keys(REM_MIN).find(k=>REM_MIN[k]==off)||'Custom Date & Time'};
+/* mode: 'add' (default), 'edit' (row id) or 'dup' (copy of row id: device zone, next 30-minute slot) */
+function openActivityForm(mode,id){
+ mode=mode||'add';
+ const tz=devEntry().id,r=mode=='add'?null:find('acts',id);
  S.cform=null;
- S.aform={type:'Call',title:'',party:'',partyLoc:'',opp:'',contacts:[],tz,startLocal:nextSlot(tz),dtTouched:false,durH:'',durM:'',remind:'5 Minutes',remTouched:false,remLocal:'',
-  dir:'',purpose:'',outcome:'',subj:'',link:'',mtype:'',status:'In Progress',pri:'Low',owner:ME,team:[],notes:'',errs:{},pk:null,cbId:null,cbQ:'',cbIdx:0,cbItems:[]};
+ const c=S.aform={mode,editId:id||'',type:'Call',title:'',party:'',partyLoc:'',opp:'',contacts:[],tz,tzDev:true,tzManual:false,startLocal:nextSlot(tz),dtTouched:false,durH:'',durM:'',remind:'5 Minutes',remTouched:false,remLocal:'',
+  dir:'',purpose:'',outcome:'',subj:'',link:'',mtype:'',status:'In Progress',pri:'Low',owner:ME,team:[],notes:'',errs:{},pk:null,cbId:null,cbQ:'',cbIdx:0,cbItems:[],dstMsg:false};
+ if(r){
+  Object.assign(c,{type:r.type,title:r.title,party:r.party,opp:r.opp||'',contacts:[...(r.contacts||[])],dir:r.dir||'',purpose:r.purpose||'',outcome:r.outcome||'',subj:r.subj||'',link:r.link||'',mtype:r.mtype||'',
+   durH:r.durH||'',durM:r.durM||'',status:r.status,pri:r.pri,owner:r.owner,team:[...(r.team||[])],notes:r.notes||'',remind:remLabel(r),remTouched:true});
+  if(mode=='edit'){
+   Object.assign(c,{tz:r.tz?zoneById(r.tz).id:devEntry().id,tzDev:!r.tz,startLocal:actLocal(r),dtTouched:true,remLocal:actRemLocal(r)});
+   if(c.remind=='Custom Date & Time'&&!c.remLocal)c.remLocal=c.startLocal;
+  }
+ }
  S.drawer={type:'actForm'};S.pop=null;render();
 }
 const aPartyRec=c=>S.data.leads.find(l=>l.name==c.party);
@@ -1085,28 +1236,18 @@ CBF.a_purpose={ph:'Select Call Purpose',get:c=>c.purpose,clr:1,opts:()=>CRMDB.li
 CBF.a_outcome={get ph(){return 'Select '+S.aform.type+' Outcome'},get:c=>c.outcome,clr:1,opts:()=>A_OUT[S.aform.type]||[],set:(c,v)=>{c.outcome=v}};
 CBF.a_mtype={ph:'Select Meeting Type',get:c=>c.mtype,clr:1,opts:()=>CRMDB.lists.act['Meeting Type'],set:(c,v)=>{c.mtype=v}};
 CBF.tz={ph:'Select Time Zone',get:c=>c.tz,tzField:1,
- disp:c=>tzLabel(c.tz,tzRef(c)),
- items:(c,q)=>{
-  const ref=tzRef(c),m=machineTz(),f=fosTz(),seen=new Set(),out=[];
-  const mk=(tz,sep)=>{const lb=tzLabel(tz,ref);return {t:'o',name:tz,tz:1,label:lb,off:tzOffsetMin(ref,tz),chips:tzChips(tz),sep,html:`<span class="tzx" title="${esc(lb)}">${esc(lb)}</span><span class="tzcs">${chipHTML(tzChips(tz))}</span>`}};
-  [m,f].forEach(z=>{if(!seen.has(z)){seen.add(z);out.push(mk(z))}});
-  const rest=allZones().filter(z=>!seen.has(z)).map(z=>mk(z)).sort((a,b)=>a.off-b.off||a.name.localeCompare(b.name));
-  if(rest.length)rest[0].sep=true;
-  const all=out.concat(rest);
-  return q?all.filter(x=>(x.label+' '+x.name).toLowerCase().includes(q)):all;
- },
- set:(c,v)=>{c.tz=v;if(!c.dtTouched)c.startLocal=nextSlot(v);afSync()}};
-const tzRef=c=>{const m=/^(\d{4})-(\d\d)-(\d\d)/.exec(c.startLocal||'');return m?Date.UTC(+m[1],+m[2]-1,+m[3],12):nowMs()};
-function tzTipText(c){
- const m=machineTz(),f=fosTz(),tz=c.tz;
- if(tz==m&&tz==f)return `Local Time: your device's time zone (${tz}). The activity is saved in this zone. This is also your FOS time zone.`;
- if(tz==m)return `Local Time: your device's time zone (${tz}). The activity is saved in this zone.`;
- if(tz==f)return `FOS Time: the System Preferred Time Zone in your user settings (${tz}). The activity is saved in this zone.`;
- const inst=wallClockToInstant(c.startLocal,tz),t1=formatInZone(inst,tz,'time');
- const sameDay=formatInZone(inst,tz,'local').slice(0,10)==formatInZone(inst,m,'local').slice(0,10);
- const t2=formatInZone(inst,m,'time')+(sameDay?'':' ('+formatInZone(inst,m,'short').split(' ').slice(0,3).join(' ')+')');
- return `Custom time zone: the activity is saved as ${t1} ${tz}. That is ${t2} on your device (${m}).`;
+ disp:c=>zoneById(c.tz).label,
+ items:(c,q)=>ZONES.filter(z=>!q||z.label.toLowerCase().includes(q)).map(z=>({t:'o',name:z.id,html:`<span class="tzx" title="${esc(z.label)}">${esc(z.label)}</span><span class="tzcs">${chipHTML(tzChips(z.id))}</span>`})),
+ set:(c,v)=>{if(!v)return;c.tz=v;c.tzManual=true;c.dstMsg=false;if(c.mode!='edit'&&!c.dtTouched)c.startLocal=nextSlot(v);afSync()}};
+const TIP1='The Activity Date and Time and Reminder Date and Time is saved according to ';
+function tzTipHTML(c){
+ const dev=devEntry(),e=zoneById(c.tz);
+ if(e.id==dev.id)return `<div>${TIP1}your Devices Time Zone</div>`;
+ const l2=`<div>On your device: ${esc(formatInZone(wallClockToInstant(c.startLocal,c.tz),machineTz(),'full'))}</div>`;
+ if(e.id==fosEntry().id)return `<div>${TIP1}your Configured Time Zone in FREIGHTOSCOPE</div>${l2}`;
+ return `<div>${TIP1}the ${esc(e.label)} time zone</div>${l2}`;
 }
+const tzNoteHTML=c=>getDeviceZone().source!='browser'&&c.tzDev&&!c.tzManual?'<div class="tznote">We could not detect your device time zone. Your FOS time zone was selected. Please confirm it before saving.</div>':'';
 function remInfo(c){ // {off, instant, local}
  const tz=c.tz,st=Date.parse(wallClockToInstant(c.startLocal,tz));
  if(c.remind=='No Reminder')return null;
@@ -1114,20 +1255,23 @@ function remInfo(c){ // {off, instant, local}
  const off=REM_MIN[c.remind],ri=st-off*6e4;return {off,instant:new Date(ri).toISOString(),local:formatInZone(ri,tz,'local')};
 }
 const lFmt=(local,tz)=>formatInZone(wallClockToInstant(local,tz),tz,'form');
+const dstHTML=c=>c.dstMsg?'<div class="tznote">This time does not exist in the selected time zone. It was adjusted.</div>':'';
 function startFieldHTML(){
- const c=S.aform;
- return `<div class="inp dtf" tabindex="0" onclick="pkOpen('start')" onkeydown="if(event.key=='Enter'||event.key==' '){event.preventDefault();pkOpen('start')}"><span>${esc(lFmt(c.startLocal,c.tz))}</span>${I.cal}</div>${c.errs.start?`<div class="err">${esc(c.errs.start)}</div>`:''}${c.pk&&c.pk.which=='start'?pkHTML():''}`;
+ const c=S.aform,t=lFmt(c.startLocal,c.tz);
+ return `<div class="inp dtf" tabindex="0" data-vt="${esc(t)}" onclick="pkOpen('start')" onkeydown="if(event.key=='Enter'||event.key==' '){event.preventDefault();pkOpen('start')}"><span>${esc(t)}</span>${I.cal}</div>${c.errs.start?`<div class="err">${esc(c.errs.start)}</div>`:''}${dstHTML(c)}${c.pk&&c.pk.which=='start'?pkHTML():''}`;
 }
 function remFieldHTML(){
  const c=S.aform,r=remInfo(c);
- if(c.remind=='Custom Date & Time')return `<div class="inp dtf" tabindex="0" onclick="pkOpen('rem')" onkeydown="if(event.key=='Enter'||event.key==' '){event.preventDefault();pkOpen('rem')}"><span>${c.remLocal?esc(lFmt(c.remLocal,c.tz)):''}</span>${I.cal}</div>${c.errs.rem?`<div class="err">${esc(c.errs.rem)}</div>`:''}${c.pk&&c.pk.which=='rem'?pkHTML():''}`;
- return `<div class="inp dtf ro"><span>${r?esc(formatInZone(r.instant,c.tz,'form')):''}</span></div>`;
+ if(c.remind=='Custom Date & Time'){const t=c.remLocal?lFmt(c.remLocal,c.tz):'';return `<div class="inp dtf" tabindex="0" data-vt="${esc(t)}" onclick="pkOpen('rem')" onkeydown="if(event.key=='Enter'||event.key==' '){event.preventDefault();pkOpen('rem')}"><span>${esc(t)}</span>${I.cal}</div>${c.errs.rem?`<div class="err">${esc(c.errs.rem)}</div>`:''}${c.pk&&c.pk.which=='rem'?pkHTML():''}`}
+ const t=r?formatInZone(r.instant,c.tz,'form'):'';
+ return `<div class="inp dtf ro" tabindex="0" data-vt="${esc(t)}"><span>${esc(t)}</span></div>`;
 }
 function afSync(){
  const c=S.aform;if(!c)return;
+ const n=normLocal(c.startLocal,c.tz);if(n!=c.startLocal){c.startLocal=n;c.dstMsg=true}
  const set=(id,h)=>{const e=$(id);if(e)e.innerHTML=h};
- set('af_start',startFieldHTML());set('af_rem',remFieldHTML());
- const t=$('tzTip');if(t)t.textContent=tzTipText(c);
+ set('af_start',startFieldHTML());set('af_rem',remFieldHTML());set('tz_note',tzNoteHTML(c));
+ const t=$('tzTip');if(t)t.innerHTML=tzTipHTML(c);
  cbSync('tz');
 }
 /* date + time picker (matches the screenshots: calendar, h / m / AM-PM, Cancel / Save) */
@@ -1154,7 +1298,7 @@ function pkSave(){
  const c=S.aform,k=c.pk,p=n=>String(n).padStart(2,'0');
  const h12=Math.min(12,Math.max(1,k.h||12)),mi=Math.min(59,Math.max(0,k.mi||0)),h24=(h12%12)+(k.ap=='PM'?12:0);
  const loc=`${k.y}-${p(k.m+1)}-${p(k.d)}T${p(h24)}:${p(mi)}`;
- if(k.which=='start'){c.startLocal=loc;c.dtTouched=true;delete c.errs.start}else{c.remLocal=loc;delete c.errs.rem}
+ if(k.which=='start'){c.startLocal=loc;c.dtTouched=true;c.dstMsg=false;delete c.errs.start}else{c.remLocal=loc;delete c.errs.rem}
  c.pk=null;afSync();
 }
 function setActType(t){const c=S.aform;c.type=t;c.outcome='';if(!c.remTouched)c.remind=t=='Call'?'5 Minutes':'No Reminder';c.pk=null;c.cbId=null;cfRender()}
@@ -1165,15 +1309,15 @@ function activityFormHTML(){
  const dur=aFl('Duration',0,`<div class="dur"><input class="inp" placeholder="HH" maxlength="2" value="${esc(c.durH)}" oninput="S.aform.durH=this.value.replace(/\\D/g,'')"><b>h</b><input class="inp" placeholder="MM" maxlength="2" value="${esc(c.durM)}" oninput="S.aform.durM=this.value.replace(/\\D/g,'')"><b>m</b></div>`);
  const row2=T=='Email'?aFl('Direction',0,cbField('a_dir'))
   :dur;
- const tzField=`<div class="fl full"><div class="lblrow"><label>Time Zone</label><span class="tzi" tabindex="0" role="button" aria-label="About time zone"><span class="tzg">i</span><span class="tzt" id="tzTip" role="tooltip">${esc(tzTipText(c))}</span></span></div>${cbField('tz')}</div>`;
+ const tzField=`<div class="fl full"><div class="lblrow"><label>Time Zone</label><span class="tzi" tabindex="0" role="button" aria-label="About time zone"><span class="tzg">i</span><span class="tzt" id="tzTip" role="tooltip">${tzTipHTML(c)}</span></span></div>${cbField('tz')}<div id="tz_note">${tzNoteHTML(c)}</div></div>`;
  const typeRows={
   Call:`${aFl('Direction',0,cbField('a_dir'))}${aFl('Purpose',0,cbField('a_purpose'))}${aFl('Outcome',0,cbField('a_outcome'))}${aFl('Status',1,cbField('a_status'))}${aFl('Priority',0,cbField('a_pri'))}${aFl('Owner',1,cbField('a_owner'))}`,
   Email:`${aFl('Subject',0,`<input class="inp" value="${esc(c.subj)}" oninput="S.aform.subj=this.value">`,'full')}${aFl('Outcome',0,cbField('a_outcome'))}${aFl('Status',1,cbField('a_status'))}${aFl('Priority',0,cbField('a_pri'))}${aFl('Owner',1,cbField('a_owner'))}`,
   Meeting:`${aFl('Location/Meeting Link',0,`<input class="inp" placeholder="Enter Location/Meeting Link" value="${esc(c.link)}" oninput="S.aform.link=this.value">`,'full')}${aFl('Meeting Type',0,cbField('a_mtype'))}${aFl('Outcome',0,cbField('a_outcome'))}${aFl('Status',1,cbField('a_status'))}${aFl('Priority',0,cbField('a_pri'))}${aFl('Owner',1,cbField('a_owner'))}`,
   Task:`${aFl('Status',1,cbField('a_status'))}${aFl('Priority',0,cbField('a_pri'))}${aFl('Owner',1,cbField('a_owner'))}`}[T];
- return `<div class="drb" onclick="closeDrawer()"></div><div class="dr cfm"><div class="hd"><h2>Add New Activity</h2>${XR}</div><div class="bd">
-  <div class="fl"><label>Activity Type<span class="rq">*</span></label><div class="atbs">${typeBtns}</div></div>
-  <div class="fl" style="margin-top:14px"><label>Title <span class="rq">*</span></label><input class="inp ${e.title?'bad':''}" value="${esc(c.title)}" oninput="S.aform.title=this.value;delete S.aform.errs.title">${e.title?`<div class="err">${esc(e.title)}</div>`:''}</div>
+ return `<div class="drb" onclick="closeDrawer()"></div><div class="dr cfm"><div class="hd"><h2>${c.mode=='edit'?'Edit '+T+' Log':'Add New Activity'}</h2>${XR}</div><div class="bd">
+  ${c.mode=='edit'?'':`<div class="fl"><label>Activity Type<span class="rq">*</span></label><div class="atbs">${typeBtns}</div></div>`}
+  <div class="fl" style="${c.mode=='edit'?'':'margin-top:14px'}"><label>Title <span class="rq">*</span></label><input class="inp ${e.title?'bad':''}" value="${esc(c.title)}" oninput="S.aform.title=this.value;delete S.aform.errs.title">${e.title?`<div class="err">${esc(e.title)}</div>`:''}</div>
   <div class="g2" style="margin-top:14px">
    <div class="fl"><label>Party<span class="rq">*</span></label>${cbField('a_party')}${e.party?`<div class="err">${esc(e.party)}</div>`:''}</div>
    ${aFl('Opportunity',0,cbField('a_opp'))}
@@ -1195,27 +1339,38 @@ function saveActivity(){
  if(c.remind=='Custom Date & Time'&&!c.remLocal)e.rem='Select a reminder date and time.';
  const ri=remInfo(c);if(ri&&ri.off<0)e.rem='Reminder must be before the activity start.';
  c.errs=e;if(Object.keys(e).length){cfRender();return}
+ c.startLocal=normLocal(c.startLocal,c.tz);
  const startInstant=wallClockToInstant(c.startLocal,c.tz);
- const rec={id:'T'+(S.data.acts.length+1)+'x'+Math.floor(Math.random()*1e4),title:c.title.trim(),type:c.type,dt:c.startLocal,
+ const f={title:c.title.trim(),type:c.type,dt:c.startLocal,
   tz:c.tz,startLocal:c.startLocal,startInstant,
   reminderOffsetMin:ri?ri.off:null,reminderLocal:ri?ri.local:'',reminderInstant:ri?ri.instant:'',
-  party:c.party,opp:c.opp,contacts:c.contacts,owner:c.owner,team:c.team,branch:S.lb,status:c.status,pri:c.pri,notes:c.notes,
+  party:c.party,opp:c.opp,contacts:c.contacts,owner:c.owner,team:c.team,status:c.status,pri:c.pri,notes:c.notes,
   dir:c.dir,purpose:c.purpose,outcome:c.outcome,subj:c.subj,link:c.link,mtype:c.mtype,durH:c.durH,durM:c.durM};
- S.data.acts.unshift(rec);
+ if(c.mode=='edit'){
+  Object.assign(find('acts',c.editId),f);
+  S.drawer=null;S.aform=null;render();toast('Activity updated successfully','g');return;
+ }
+ S.data.acts.unshift({id:'T'+(S.data.acts.length+1)+'x'+Math.floor(Math.random()*1e4),branch:S.lb,...f});
  S.drawer=null;S.aform=null;render();toast('Activity created successfully.','g');
 }
 /* ============ Prototype controls (time zone demo) ============ */
+function dzNote(){const e=$('dzNear');if(e)e.textContent=getDeviceZone().near?'Nearest match used':''}
+function dzSet(k,v){DEMO[k]=v;dzNote();if(!S.drawer)render()}
 function demoPanel(){
  if(!SHOW_DEMO_CONTROLS||$('demoTz'))return;
  const d=document.createElement('div');d.id='demoTz';
- const opts=sel=>allZones().map(z=>`<option ${z==sel?'selected':''}>${z}</option>`).join('');
- d.innerHTML=`<button class="dzb" onclick="this.parentNode.classList.toggle('open')">⏱ Time zone demo</button><div class="dzp">
-  <label>Machine time zone<select id="dzM" onchange="DEMO.machine=this.value==='__real'?'':this.value">${'<option value="__real">Device default ('+Intl.DateTimeFormat().resolvedOptions().timeZone+')</option>'+opts('')}</select></label>
-  <label>FOS time zone<select id="dzF" onchange="DEMO.fos=this.value==='__const'?'':this.value">${'<option value="__const">FOS_SYSTEM_TZ ('+FOS_SYSTEM_TZ+')</option>'+opts('')}</select></label>
+ let real='';try{real=Intl.DateTimeFormat().resolvedOptions().timeZone}catch(e){}
+ const opts=sel=>ZONES.map(z=>`<option value="${z.id}" ${z.id==sel?'selected':''}>${esc(z.label)}</option>`).join('');
+ d.innerHTML=`<button class="dzb" onclick="this.parentNode.classList.toggle('open');dzNote()">⏱ Time zone demo</button><div class="dzp">
+  <label>Machine time zone<select id="dzM" onchange="dzSet('machine',this.value)"><option value="">Device default (${esc(real)})</option>${opts('')}</select></label>
+  <label>FOS (System Preferred) time zone<select id="dzF" onchange="dzSet('fos',this.value)">${opts(FOS_SYSTEM_TZ)}</select></label>
   <label>Now (in machine zone)<input type="datetime-local" id="dzN" onchange="DEMO.now=this.value"></label>
   <button class="btn2" onclick="DEMO.now='';$('dzN').value=''">Use real clock</button>
-  <small>Applies the next time the form opens. Saved rows never change.</small></div>`;
- document.body.appendChild(d);
+  <label class="dzc"><input type="checkbox" id="dzU" onchange="dzSet('simUnavail',this.checked)"> Simulate: device zone unavailable</label>
+  <label class="dzc"><input type="checkbox" id="dzFB" onchange="dzSet('forceFos',this.checked)"> Force FOS fallback</label>
+  <div class="dzn" id="dzNear"></div>
+  <small>Applies the next time a form opens or a list renders. Saved data never changes.</small></div>`;
+ document.body.appendChild(d);dzNote();
 }
 /* ============ view drawers ============ */
 const XR='<button class="xr" onclick="closeDrawer()">✕</button>';
@@ -1230,8 +1385,8 @@ function drawerHTML(){
   return `<div class="drb" onclick="closeDrawer()"></div><div class="dr"><div class="hd"><h2>View Contact</h2>${XR}</div><div class="bd"><div class="g2">${fl('First Name',fn,'',{req:1})}${fl('Last Name',ln,'',{req:1})}${fl('Email',r.email,'',{req:1})}${fl('Phone No. (Primary)',r.phone=='--'?'':r.phone,'Enter Phone No.')}${fl('Owner',r.owner=='--'?'':r.owner,'',{req:1,sel:1})}${fl('Source','Advertisement','',{req:1,sel:1})}${fl('Party',r.party,'',{req:1,sel:1})}</div><hr class="hr"><div class="acc">Additional Details<span>⌄</span></div><div class="g2">${fl('Notes','','Enter Notes',{full:1,area:1})}</div></div><div class="ft"><button class="btn2 g" onclick="closeDrawer()">Cancel</button><button class="btn2 p" onclick="doAct('contact','${r.id}','Edit')">Edit</button></div></div>`}
 const r=find('acts',d.id),ty=r.type;
  const dur=`<div class="fl"><label>Duration</label><div class="dur"><div class="fi2"><span class="ph2">HH</span></div><b>h</b><div class="fi2"><span class="ph2">MM</span></div><b>m</b></div></div>`;
- const row2=ty=='Call'?`${fl('Date and Time',fdt(r.dt),'',{req:1})}${dur}${fl('Remind before','No Reminder','',{sel:1})}${fl('Reminder Date and Time','','')}${fl('Direction','Outgoing','',{sel:1})}${fl('Purpose','','Select Call Purpose',{sel:1})}${fl('Outcome','','Select Call Outcome',{sel:1})}${fl('Status',r.status,'',{req:1,sel:1})}`
-  :`${fl('Date and Time',fdt(r.dt),'',{req:1})}${fl('Direction','Outgoing','',{sel:1})}${fl('Remind before','No Reminder','',{sel:1})}${fl('Reminder Date and Time','','')}${fl('Subject','','',{full:1})}${fl('Outcome','','Select '+ty+' Outcome',{sel:1})}${fl('Status',r.status,'',{req:1,sel:1})}`;
+ const row2=ty=='Call'?`${fl('Time Zone',tzCell(r),'',{full:1,sel:1})}${fl('Date and Time',formatInZone(actInst(r),actTz(r),'form'),'',{req:1})}${dur}${fl('Remind before',remLabel(r),'',{sel:1})}${fl('Reminder Date and Time',r.reminderInstant?formatInZone(r.reminderInstant,actTz(r),'form'):'','')}${fl('Direction','Outgoing','',{sel:1})}${fl('Purpose','','Select Call Purpose',{sel:1})}${fl('Outcome','','Select Call Outcome',{sel:1})}${fl('Status',r.status,'',{req:1,sel:1})}`
+  :`${fl('Time Zone',tzCell(r),'',{full:1,sel:1})}${fl('Date and Time',formatInZone(actInst(r),actTz(r),'form'),'',{req:1})}${fl('Direction','Outgoing','',{sel:1})}${fl('Remind before',remLabel(r),'',{sel:1})}${fl('Reminder Date and Time',r.reminderInstant?formatInZone(r.reminderInstant,actTz(r),'form'):'','')}${fl('Subject','','',{full:1})}${fl('Outcome','','Select '+ty+' Outcome',{sel:1})}${fl('Status',r.status,'',{req:1,sel:1})}`;
  return `<div class="drb" onclick="closeDrawer()"></div><div class="dr"><div class="hd"><h2>View ${ty} Log</h2>${XR}</div><div class="bd"><div class="g2">${fl('Title',r.title,'',{req:1,full:1})}${fl('Party',r.party,'',{req:1,sel:1})}${fl('Opportunity',r.opp,'Select Opportunity',{sel:1})}${fl('Contacts','','Select Contacts',{full:1,sel:1})}${row2}${fl('Priority',r.pri,'',{sel:1})}${fl('Owner',r.owner,'',{req:1,sel:1})}${fl('Other Team Members','','Select Team Members',{full:1,sel:1})}${fl('Notes','','Enter notes',{full:1,area:1})}</div></div><div class="ft sp"><button class="btn2 dl2" onclick="doAct('act','${r.id}','Delete')">Delete</button><div style="display:flex;gap:10px"><button class="btn2 g" onclick="closeDrawer()">Cancel</button><button class="btn2 p" onclick="doAct('act','${r.id}','Edit')">Edit</button></div></div></div>`}
 /* ============ detail screens ============ */
 Object.assign(I,{
@@ -1245,7 +1400,7 @@ Object.assign(I,{
  chL:svg('<path d="M15 5l-7 7 7 7"/>'),chR:svg('<path d="M9 5l7 7-7 7"/>')});
 const ACI={Email:['#6f6ef0',I.mail],Call:['#2f8f83',I.phone],Meeting:['#37b6e0',I.user],Task:['#3b8fe0',I.task]};
 function actItem(r){const [c,ic]=ACI[r.type],ini=r.owner.split(' ').map(w=>w[0]).join('').slice(0,2);
- return `<div class="ai"><div class="aic" style="background:${c}">${ic}</div><div class="aim"><div class="ait"><b>${r.title}</b>${r.status=='In Progress'?'<span class="pill gn">In Progress</span>':'<span class="pill gy" title="Completed">&nbsp;</span>'}</div><div class="aio"><span class="av">${ini}</span><span>${r.owner}</span><span class="pr">${r.pri}</span></div></div><div class="aid">${formatInZone(actInst(r),actTz(r),'full')}</div><span class="rb" data-pb onclick="rowMenu(event,'act','${r.id}','feed')">${I.dots}</span></div>`}
+ return `<div class="ai"><div class="aic" style="background:${c}">${ic}</div><div class="aim"><div class="ait"><b>${r.title}</b>${r.status=='In Progress'?'<span class="pill gn">In Progress</span>':'<span class="pill gy" title="Completed">&nbsp;</span>'}</div><div class="aio"><span class="av">${ini}</span><span>${r.owner}</span><span class="pr">${r.pri}</span></div></div><div class="aid">${formatInZone(actInst(r),machineTz(),'full')}</div><span class="rb" data-pb onclick="rowMenu(event,'act','${r.id}','feed')">${I.dots}</span></div>`}
 const addBtn=(b,l)=>`<button class="fb addn" onclick="guard('${b}','${l}')">${I.plusc} Add New</button>`;
 function actPanel(list,b,lead){
  const at=S.det.atab||'all';
@@ -1255,8 +1410,8 @@ function actPanel(list,b,lead){
  let body;
  if(at=='files')body=`<div class="ah"><h3>Files</h3><div class="ar">${addBtn(b,'Add New File')}</div></div><div class="sbox"><div class="ai"><div class="aic" style="background:#8a94a6">${I.file}</div><div class="aim"><div class="ait"><b>Rate-sheet.pdf</b></div><div class="aio"><span>${ME}</span></div></div><span><button class="sb" onclick="toast('Preview File: allowed (prototype)','g')">Preview File</button> <button class="sb" onclick="toast('Download File: allowed (prototype)','g')">Download File</button></span></div></div>`;
  else if(at=='notes')body=`<div class="ah"><h3>Notes</h3><div class="ar">${addBtn(b,lead?'Add New Note':'Add Note')}</div></div><div class="sbox"><div class="ai"><div class="aic" style="background:#8a94a6">${I.note}</div><div class="aim"><div class="ait"><b>Customer asked for revised rates.</b></div><div class="aio"><span>${ME}</span></div></div></div></div>`;
- else{const f=list.filter(x=>at=='all'||x.type==at).sort((x,y)=>y.dt.localeCompare(x.dt));
-  const up=f.filter(x=>x.dt.slice(0,10)>'2026-10-27'),past=f.filter(x=>x.dt.slice(0,10)<='2026-10-27');
+ else{const f=list.filter(x=>at=='all'||x.type==at).sort((x,y)=>Date.parse(actInst(y))-Date.parse(actInst(x))||y.dt.localeCompare(x.dt));
+  const now=nowMs(),up=f.filter(x=>Date.parse(actInst(x))>now),past=f.filter(x=>Date.parse(actInst(x))<=now);
   const box=(l,arr,msg)=>`<div class="sec">${l}</div><div class="sbox">${arr.length?arr.map(actItem).join(''):`<div class="se"><span class="mc">${I.minus}</span>${msg}</div>`}</div>`;
   body=`<div class="ah"><h3>${at=='all'?'All Activities':TB.find(t=>t[0]==at)[1]}</h3><div class="ar">${addBtn(b,'Add New Activity')}${rng}</div></div>${box('Upcoming',up,'No upcoming activities')}${box('Past',past,'No past activities')}`}
  return `<div class="atabs">${TB.map(t=>`<button class="${at==t[0]?'on':''}" onclick="S.det.atab='${t[0]}';render()">${t[2]}${t[1]}</button>`).join('')}</div><div class="apan">${body}</div>`}
@@ -1309,8 +1464,8 @@ function calHTML(){
  const evs=S.data.acts.filter(a=>ac2.includes(a.branch)&&((sel.includes('me')&&a.owner==ME)||sel.includes(a.owner)));
  const total=Math.ceil((off+days)/7)*7;let cells=['MON','TUE','WED','THU','FRI','SAT','SUN'].map(d=>`<div class="cdn">${d}</div>`).join('');
  for(let i=0;i<total;i++){const dt=new Date(y,m,i-off+1),inM=dt.getMonth()==first.getMonth(),iso=`${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}`;
-  const day=evs.filter(e=>e.dt.slice(0,10)==iso).sort((x,z)=>x.dt.localeCompare(z.dt)),exp=S.calExp[iso],show=day.length>3&&!exp?day.slice(0,2):day;
-  cells+=`<div class="dc2 ${inM?'':'out'}"><span class="dnum ${iso=='2026-10-27'?'today':''}">${dt.getDate()}</span>${show.map(e=>{const c=CEV[e.type];return `<div class="ev2" style="background:${c[0]};border-left-color:${c[1]};color:${c[2]}" onclick="doAct('act','${e.id}','View',true)">${c[3]}<span>${ftime(e.dt)} - ${e.title}</span></div>`}).join('')}${day.length>3&&!exp?`<div class="ev2 more" onclick="S.calExp['${iso}']=1;render()">+${day.length-2} more</div>`:''}</div>`}
+  const dl=e=>formatInZone(actInst(e),machineTz(),'local'),day=evs.filter(e=>dl(e).slice(0,10)==iso).sort((x,z)=>Date.parse(actInst(x))-Date.parse(actInst(z))),exp=S.calExp[iso],show=day.length>3&&!exp?day.slice(0,2):day;
+  cells+=`<div class="dc2 ${inM?'':'out'}"><span class="dnum ${iso=='2026-10-27'?'today':''}">${dt.getDate()}</span>${show.map(e=>{const c=CEV[e.type];return `<div class="ev2" style="background:${c[0]};border-left-color:${c[1]};color:${c[2]}" onclick="doAct('act','${e.id}','View',true)">${c[3]}<span>${ftime(dl(e))} - ${e.title}</span></div>`}).join('')}${day.length>3&&!exp?`<div class="ev2 more" onclick="S.calExp['${iso}']=1;render()">+${day.length-2} more</div>`:''}</div>`}
  const chips=sel.length==0?'':sel.map(k=>`<span class="cchip">${CALU.find(x=>x[0]==k)[1]}<b onclick="calToggle('${k}')">×</b></span>`).join('');
  const allOn=sel.length==CALU.length;
  const dd=S.calDD?`<div class="cdd"><div class="co sm" onclick="calToggle('all')"><span class="cb ${allOn?'on':''}"></span>Select All</div>${CALU.map(x=>`<div class="co" onclick="calToggle('${x[0]}')"><span class="cb ${sel.includes(x[0])?'on':''}"></span>${x[1]}</div>`).join('')}</div>`:'';
@@ -1375,6 +1530,23 @@ document.addEventListener('click',e=>{
  if(S.calDD&&!e.target.closest('#caldd')){S.calDD=false;ch=true}
  if(ch)render()});
 document.addEventListener('keydown',e=>{if(e.key=='Escape'){if(S.bf.open){S.bf.open=null;S.bf.q='';render()}S.pop=null;renderPop()}});
+/* full-value tooltip for the horizontally scrollable form values: hover, keyboard focus, tap-and-hold */
+(function(){
+ const tip=document.createElement('div');tip.id='vtip';document.body.appendChild(tip);let tm;
+ const tgt=e=>e.target.closest?e.target.closest('[data-vt]'):null;
+ const show=el=>{const t=el.getAttribute('data-vt');if(!t)return;tip.textContent=t;tip.style.display='block';const r=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;tip.style.left=Math.max(8,Math.min(r.left,innerWidth-w-8))+'px';tip.style.top=(r.top-h-8<8?r.bottom+8:r.top-h-8)+'px'};
+ const hide=()=>{clearTimeout(tm);tip.style.display='none'};
+ document.addEventListener('mouseover',e=>{const t=tgt(e);if(t)show(t)});
+ document.addEventListener('mouseout',e=>{if(tgt(e))hide()});
+ document.addEventListener('focusin',e=>{const t=tgt(e);if(t)show(t)});
+ document.addEventListener('focusout',hide);
+ document.addEventListener('touchstart',e=>{const t=tgt(e);if(t){clearTimeout(tm);tm=setTimeout(()=>show(t),500)}},{passive:true});
+ document.addEventListener('touchmove',()=>clearTimeout(tm),{passive:true});
+ document.addEventListener('touchend',()=>{clearTimeout(tm);setTimeout(hide,1500)});
+ document.addEventListener('contextmenu',e=>{if(tgt(e)||(e.target.closest&&e.target.closest('.tzi')))e.preventDefault()});
+ document.addEventListener('wheel',e=>{const t=tgt(e);if(!t||t.scrollWidth<=t.clientWidth)return;if(e.shiftKey||Math.abs(e.deltaX)>Math.abs(e.deltaY)){t.scrollLeft+=e.deltaX||e.deltaY;e.preventDefault()}},{passive:false});
+ document.addEventListener('keydown',e=>{const t=tgt(e);if(t&&t.tagName!='INPUT'&&(e.key=='ArrowRight'||e.key=='ArrowLeft')){t.scrollLeft+=e.key=='ArrowRight'?40:-40;e.preventDefault()}});
+})();
 init();render();demoPanel();
 </script>
 </body>
