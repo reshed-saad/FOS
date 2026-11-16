@@ -889,10 +889,10 @@ button,.btn2,.cbtn,.nv,.inp,select{touch-action:manipulation}
 .eml .emlkw{width:300px}.eml .emlkp{padding:6px}.eml .emlkp label{display:block;font-size:13px;font-weight:600;margin-bottom:4px}.eml .emlku{font-size:13px;color:var(--mut);word-break:break-all;margin-bottom:8px}.eml .emdf{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}
 .eml .emtbar{position:absolute;left:6px;z-index:20;display:none;gap:2px;flex-wrap:wrap;max-width:calc(100% - 12px);background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 14px rgba(20,30,60,.18);padding:2px}.eml .emtbar .emtx{height:28px;font-size:12.5px;white-space:nowrap}
 .eml .emah{display:flex;align-items:center;gap:6px}.eml .emah label{margin:0}.eml .emplus{color:var(--blue)}.eml .emplus svg{width:20px;height:20px}.eml .emat{margin-top:8px;overflow-x:auto}.eml .emat .t{min-width:0;width:100%}.eml .emfn{color:var(--blue);text-decoration:underline;cursor:pointer;word-break:break-all}.eml .emtd{width:44px;text-align:right}.eml .emtr{color:#d93a3a}
-.eml .emsplit{display:inline-flex}.eml .emsplit .btn2{border-radius:6px 0 0 6px}.eml .emsplit .emchev{border-radius:0 6px 6px 0;border-left:1px solid rgba(255,255,255,.4);padding:0 10px;min-width:38px;display:inline-flex;align-items:center;justify-content:center}.eml .emsplit .emchev svg{width:16px;height:16px}.eml .emsplit .btn2:disabled{opacity:.6;cursor:not-allowed}
-.eml .emmenu{position:absolute;right:20px;bottom:64px;z-index:40;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(20,30,60,.2);padding:6px;min-width:210px}.eml .emmh{font-size:12px;font-weight:700;color:var(--mut);padding:6px 10px 4px}.eml .emmi{display:block;width:100%;text-align:left;padding:9px 10px;border:0;background:none;border-radius:6px;cursor:pointer;font:inherit;font-size:14px}.eml .emmi:hover,.eml .emmi:focus{background:#eef1f6;outline:none}
-.eml .emdbk{position:absolute;inset:0;background:rgba(15,23,42,.45);z-index:60;display:flex;align-items:center;justify-content:center}.eml .emdlg{width:min(360px,calc(100% - 32px));background:#fff;border-radius:10px;padding:18px 20px;box-shadow:0 12px 40px rgba(0,0,0,.3)}.eml .emdlg h3{margin:0 0 12px;font-size:17px}
-@media(max-width:767px){.eml .emlk{min-height:40px;padding:0 4px}.eml .emmenu{right:12px}}
+@media(max-width:767px){.eml .emlk{min-height:40px;padding:0 4px}}
+.dr.eml .g2{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}@media(max-width:480px){.dr.eml .g2{grid-template-columns:minmax(0,1fr)}}
+.dr .hd h2{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.hdr{display:flex;align-items:center;gap:8px;flex:none;margin-left:12px}
+.dr .hd .hdsend{display:inline-flex;align-items:center;gap:6px;height:32px;min-height:32px;padding:0 12px;border:0;border-radius:6px;background:#e8554e;color:#fff;font:inherit;font-size:13.5px;font-weight:600;white-space:nowrap;flex:none;cursor:pointer}.dr .hd .hdsend svg{width:14px;height:14px}.dr .hd .hdsend:hover{background:#d4453f}
 /* CTA button states: primary #366cbc -> #1b315e on hover / press; other types one step darker; disabled buttons never change */
 :root{--cta:#366cbc;--cta-h:#1b315e}
 .cbtn,.btn2.p,.sb.p,.ebtn,.rmd .rbs .yes{background:var(--cta);border-color:var(--cta);color:#fff;transition:background-color .15s ease,border-color .15s ease}
@@ -1944,8 +1944,8 @@ function clearCF(k){delete cur().cf[k];cur().page=1;S.pop=null;renderPop();refre
 function showPop(e,html,w){e.stopPropagation();const r=e.currentTarget.getBoundingClientRect();S.pop={x:w?Math.max(8,Math.min(r.right-w,innerWidth-w-8)):Math.min(r.left,innerWidth-260),y:r.bottom+4,r:r.right,html};renderPop()}
 function renderPop(){const p=$('pop');if(!S.pop){p.innerHTML='';return}p.style.left=S.pop.x+'px';p.style.top=S.pop.y+'px';p.innerHTML=S.pop.html}
 const MENUS={
- lead:r=>['View','Edit',r.status=='Active'?'Deactivate':'Activate'],opp:()=>['View','Edit','Delete'],contact:()=>['View','Edit','Delete'],
- act:()=>['View','Edit','Delete','Duplicate'],cleadc:()=>['View','Edit','Delete','Mark as Primary'],feed:()=>['View Activity','Edit','Delete','Duplicate']};
+ lead:r=>['View','Edit',r.status=='Active'?'Deactivate':'Activate'],opp:()=>['View','Edit','Delete'],contact:()=>['View','Edit','Send Email','Delete'],
+ act:()=>['View','Edit','Delete','Duplicate'],cleadc:()=>['View','Edit','Send Email','Delete','Mark as Primary'],feed:()=>['View Activity','Edit','Delete','Duplicate']};
 function rowMenu(e,kind,id,menu){if(kind=='inq')return iqMenu(e,id);const r=kind=='contact'?find('contacts',id):find(kind=='lead'?'leads':kind=='opp'?'opps':kind=='act'?'acts':'contacts',id);
  const m=MENUS[menu||kind](r);
  showPop(e,`<div class="menu">${m.map(a=>`<div onclick="doAct('${kind}','${id}','${a}')">${a}${a=='View'||a=='Edit'?'':''}</div>`).join('')}<div style="font-size:10px;color:#999;cursor:default">menu ${dp()}</div></div>`)}
@@ -1961,6 +1961,7 @@ function doAct(kind,id,a,fromCal){
   return}
  const br=(kind=='act'&&S.screen=='oppD')?find('opps',S.det.id).branch:r.branch;
  if(kind=='act'&&a=='Edit'&&br!==S.lb&&S.roleOff){toast(MSG_PERM,'r');return}
+ if(kind=='contact'&&a=='Send Email'){emcOpen(id,'row');return}
  if(kind=='contact'&&a=='Edit'){
   if(br!==S.lb){toast(MSG_BLOCK,'r');return}
   openContactForm('edit',id);return
@@ -2008,8 +2009,8 @@ function closeDrawer(force){if(S.lform&&S.drawer&&S.drawer.type=='leadForm'){if(
  if(S.cimp&&S.drawer&&S.drawer.type=='impContacts'){if(S.cimp.saving)return;if(force!==true&&S.cimp.file){ciAsk();return}S.cimp.run++}
  if(force!==true&&S.drawer&&S.drawer.type=='actForm'&&afDirty()){caAsk();return}
  if(S.eform&&S.drawer&&S.drawer.type=='emailForm'){if(S.eform.saving)return;if(force!==true&&eDirty()){caAsk();return}}
- const lr=(S.lform||S.oform||S.iform||{}).ret,wasImp=!!(S.imp&&S.drawer&&S.drawer.type=='impLeads'),wasCi=!!(S.cimp&&S.drawer&&S.drawer.type=='impContacts');
- clearTimeout(T.pb);if(CA.open){CA.open=false;CA.ret=null;caRender()}S.drawer=null;S.cform=null;S.aform=null;S.eform=null;S.lform=null;S.oform=null;S.iform=null;S.imp=null;S.cimp=null;S.colDraft=null;render();if(lr&&lr.isConnected&&lr.focus)lr.focus({preventScroll:true});if(wasImp)setTimeout(()=>{const b=$('liImportBtn');if(b)b.focus({preventScroll:true})},0);if(wasCi)setTimeout(()=>{const b=$('ciImportBtn');if(b)b.focus({preventScroll:true})},0)}
+ const ev=S.eform&&S.drawer&&S.drawer.type=='emailForm'&&S.eform.origin=='view'?S.eform.contactId:'',lr=(S.lform||S.oform||S.iform||{}).ret,wasImp=!!(S.imp&&S.drawer&&S.drawer.type=='impLeads'),wasCi=!!(S.cimp&&S.drawer&&S.drawer.type=='impContacts');
+ clearTimeout(T.pb);if(CA.open){CA.open=false;CA.ret=null;caRender()}S.drawer=ev&&find('contacts',ev)?{type:'contact',id:ev}:null;S.cform=null;S.aform=null;S.eform=null;S.lform=null;S.oform=null;S.iform=null;S.imp=null;S.cimp=null;S.colDraft=null;render();if(lr&&lr.isConnected&&lr.focus)lr.focus({preventScroll:true});if(wasImp)setTimeout(()=>{const b=$('liImportBtn');if(b)b.focus({preventScroll:true})},0);if(wasCi)setTimeout(()=>{const b=$('ciImportBtn');if(b)b.focus({preventScroll:true})},0)}
 function renderDrawer(){$('drawer').innerHTML=drawerHTML();remInert();if(S.eform&&S.drawer&&S.drawer.type=='emailForm')edInit()}
 function remInert(){const c=S.aform;if(!c||!S.drawer||S.drawer.type!='actForm')return;const pst=remPast(c);['af_rb','af_rd'].forEach(id=>{const e=$(id);if(e)[...e.children].forEach(x=>{if(x.tagName!='LABEL')x.inert=pst})})}
 /* ============ FMS-18868: Contact Add/Edit form, Party field inline Lead creation ============ */
@@ -3264,7 +3265,7 @@ function remInfo(c){ // {off, instant, local}
 }
 const lFmt=(local,tz)=>formatInZone(wallClockToInstant(local,tz),tz,'form');
 function startFieldHTML(){
- const c=S.drawer&&S.drawer.type=='emailForm'?S.eform:S.aform,t=lFmt(c.startLocal,devId());
+ const c=S.aform,t=lFmt(c.startLocal,devId());
  return `<div class="inp dtf" tabindex="0" data-vt="${esc(t)}" onclick="pkOpen('start')" onkeydown="if(event.key=='Enter'||event.key==' '){event.preventDefault();pkOpen('start')}"><span class="dtv">${esc(t)}</span>${I.cal}</div>${c.errs.start?`<div class="err">${esc(c.errs.start)}</div>`:''}${c.pk&&c.pk.which=='start'?pkHTML():''}`;
 }
 function remFieldHTML(){
@@ -3283,8 +3284,8 @@ function afSync(){
  const pst=remPast(c);['af_rb','af_rd'].forEach(id=>{const e=$(id);if(e){e.classList.toggle('remdis',pst);[...e.children].forEach(x=>{if(x.tagName!='LABEL')x.inert=pst})}});
 }
 /* date + time picker (matches the screenshots: calendar, h / m / AM-PM, Cancel / Save) */
-const pkF=()=>S.drawer&&S.drawer.type=='inqForm'?S.iform:S.drawer&&S.drawer.type=='emailForm'?S.eform:S.aform;
-const pkSyF=c=>c===S.iform?iqPkSync():c===S.eform?emSyncPk():afSync();
+const pkF=()=>S.drawer&&S.drawer.type=='inqForm'?S.iform:S.aform;
+const pkSyF=c=>c===S.iform?iqPkSync():afSync();
 function pkOpen(which){
  const c=pkF();if(c.cbId)cbClose(c.cbId);
  const vt=document.getElementById('vtip');if(vt)vt.style.display='none';
@@ -3558,7 +3559,7 @@ function drawerHTML(){
  if(d.type=='impContacts')return ciImpHTML();
  if(d.type=='contact'){
   const r=find('contacts',d.id),sp=r.n.indexOf(' '),fn=sp<0?r.n:r.n.slice(0,sp),ln=sp<0?'':r.n.slice(sp+1);
-  return `<div class="drb" onclick="closeDrawer()"></div><div class="dr"><div class="hd"><h2>View Contact</h2>${XR}</div><div class="bd"><div class="g2">${fl('First Name',fn,'',{req:1})}${fl('Last Name',ln,'',{req:1})}${fl('Email',r.email,'',{req:1})}${fl('Phone No. (Primary)',r.phone=='--'?'':r.phone,'Enter Phone No.')}${fl('Owner',r.owner=='--'?'':r.owner,'',{req:1,sel:1})}${fl('Source','Advertisement','',{req:1,sel:1})}${fl('Party',r.party,'',{req:1,sel:1})}</div><hr class="hr"><div class="acc">Additional Details<span>⌄</span></div><div class="g2">${fl('Notes','','Enter Notes',{full:1,area:1})}</div></div><div class="ft"><button class="btn2 g" onclick="closeDrawer()">Cancel</button><button class="btn2 p" onclick="doAct('contact','${r.id}','Edit')">Edit</button></div></div>`}
+  return `<div class="drb" onclick="closeDrawer()"></div><div class="dr"><div class="hd"><h2>View Contact</h2><div class="hdr"><button class="hdsend" aria-label="Send Email" title="Send Email" onclick="emcOpen('${r.id}','view')">${I.mail} Send Email</button>${XR}</div></div><div class="bd"><div class="g2">${fl('First Name',fn,'',{req:1})}${fl('Last Name',ln,'',{req:1})}${fl('Email',r.email,'',{req:1})}${fl('Phone No. (Primary)',r.phone=='--'?'':r.phone,'Enter Phone No.')}${fl('Owner',r.owner=='--'?'':r.owner,'',{req:1,sel:1})}${fl('Source','Advertisement','',{req:1,sel:1})}${fl('Party',r.party,'',{req:1,sel:1})}</div><hr class="hr"><div class="acc">Additional Details<span>⌄</span></div><div class="g2">${fl('Notes','','Enter Notes',{full:1,area:1})}</div></div><div class="ft"><button class="btn2 g" onclick="closeDrawer()">Cancel</button><button class="btn2 p" onclick="doAct('contact','${r.id}','Edit')">Edit</button></div></div>`}
 const r=find('acts',d.id),ty=r.type;
  const dur=`<div class="fl"><label>Duration</label><div class="dur"><div class="fi2"><span class="ph2">HH</span></div><b>h</b><div class="fi2"><span class="ph2">MM</span></div><b>m</b></div></div>`;
  const row2=ty=='Call'?`${vdt(r)}${dur}${fl('Remind before',remLabel(r),'',{sel:1})}${fl('Reminder Date and Time',r.reminderInstant?formatInZone(r.reminderInstant,devId(),'full'):'','',{zi:ziIcon('',r.reminderInstant?Date.parse(r.reminderInstant):'')})}${fl('Direction','Outgoing','',{sel:1})}${fl('Purpose','','Select Call Purpose',{sel:1})}${fl('Outcome','','Select Call Outcome',{sel:1})}${fl('Status',r.status,'',{req:1,sel:1})}`
@@ -3591,7 +3592,7 @@ function actPanel(list,b,lead){
  else{const f=list.filter(x=>at=='all'||x.type==at).sort((x,y)=>Date.parse(actInst(y))-Date.parse(actInst(x))||y.id.localeCompare(x.id));
   const now=nowMs(),up=f.filter(x=>Date.parse(actInst(x))>now),past=f.filter(x=>Date.parse(actInst(x))<=now);
   const box=(l,arr,msg)=>`<div class="sec">${l}</div><div class="sbox">${arr.length?arr.map(actItem).join(''):`<div class="se"><span class="mc">${I.minus}</span>${msg}</div>`}</div>`;
-  body=`<div class="ah"><h3>${at=='all'?'All Activities':TB.find(t=>t[0]==at)[1]}</h3><div class="ar">${lead&&at=='Email'?`<button class="fb addn" aria-label="Send email" title="Send email" onclick="emlOpen('${S.det.id}')">${I.mail} Email</button>`:''}<button class="fb addn" onclick="addAct('${b}')">${I.plusc} Add New</button>${rng}${tzToggleHTML()}</div></div>${box('Upcoming',up,'No upcoming activities')}${box('Past',past,'No past activities')}`}
+  body=`<div class="ah"><h3>${at=='all'?'All Activities':TB.find(t=>t[0]==at)[1]}</h3><div class="ar">${lead&&at=='Email'?`<button class="fb addn" aria-label="Send Email" title="Send Email" onclick="emlOpen('${S.det.id}')">${I.mail} Send Email</button>`:''}<button class="fb addn" onclick="addAct('${b}')">${I.plusc} Add New</button>${rng}${tzToggleHTML()}</div></div>${box('Upcoming',up,'No upcoming activities')}${box('Past',past,'No past activities')}`}
  return `<div class="atabs">${TB.map(t=>`<button class="${at==t[0]?'on':''}" onclick="S.det.atab='${t[0]}';render()">${t[2]}${t[1]}</button>`).join('')}</div><div class="apan">${body}</div>`}
 
 
@@ -3612,7 +3613,7 @@ function leadDHTML(){
  const r=find('leads',S.det.id),b=r.branch,t=S.det.tab||'Lead Details';
  const os=S.data.opps.filter(o=>o.party==r.name),cs=S.data.contacts.filter(c=>c.party==r.name),pc=cs[0];
  const feed=S.data.acts.filter(x=>!x.calendarSample&&x.party==r.name);
- const cvd=(r.convStatus||'Pending')=='Converted',right=`<button class="rbtn emlb" aria-label="Send email" title="Send email" onclick="emlOpen('${r.id}')">${I.mail} Email</button><button class="rbtn" onclick="leadToggle('${r.id}')">${r.status=='Active'?'Mark as Inactive':'Mark as Active'}</button><button class="cbtn" ${cvd?'disabled style="opacity:.5;cursor:not-allowed"':''} onclick="spConvOpen('${r.id}')">Convert Lead</button>`;
+ const cvd=(r.convStatus||'Pending')=='Converted',right=`<button class="rbtn emlb" aria-label="Send Email" title="Send Email" onclick="emlOpen('${r.id}')">${I.mail} Send Email</button><button class="rbtn" onclick="leadToggle('${r.id}')">${r.status=='Active'?'Mark as Inactive':'Mark as Active'}</button><button class="cbtn" ${cvd?'disabled style="opacity:.5;cursor:not-allowed"':''} onclick="spConvOpen('${r.id}')">Convert Lead</button>`;
  const tabs=[['Lead Details','Lead Details'],['Opportunities',`Opportunities (${os.length})`],['Contacts',`Contacts (${cs.length})`]];
  let body;
  if(t=='Lead Details')body=`<div class="hcard"><div class="avt">${r.name.slice(0,2).toUpperCase()}</div><div class="hm"><div class="hn"><h2>${r.name}</h2><span class="pill" style="background:${r.status=='Active'?'#4bb543':'#ee6b6b'}">${r.status}</span><span class="stc ${r.fav?'on':''}" onclick="favTog('${r.id}');render()">${r.fav?I.starF:I.star}</span></div><div class="hl">${I.bld}${r.loc}</div><div class="hl">${I.pin}${r.addr}</div></div><button class="ebtn" onclick="lfEdit('${r.id}')">Edit ${I.pen}</button></div>
@@ -4626,7 +4627,7 @@ function ziHide(){ZT.el=null;if(ZT.tip)ZT.tip.style.display='none'}
  window.addEventListener('resize',()=>{if(ZT.el&&ZT.el.isConnected)ziShow(ZT.el);else ziHide()});
  document.addEventListener('scroll',()=>{if(ZT.el)ziHide()},true);
 })();
-/* ============ Lead Details: Send Email (rich text, attachments, schedule; simulated, no real mail) ============ */
+/* ============ Lead Details: Send Email (rich text, attachments; simulated, no real mail) ============ */
 const EML_RATE_ROW=(a,b)=>`<tr><td><strong>${a}</strong></td><td><br></td><td><strong>${b}</strong></td><td><br></td></tr>`;
 const EML_TPL=[
  {n:'Introduction',s:'Introduction from {{Owner}}, FREIGHTOSCOPE',b:'<p>Dear {{Contact Name}},</p><p>Thank you for your interest. I would like to introduce our freight services and understand your requirements for {{Company}}.</p><p>Best regards,<br>{{Owner}}</p>'},
@@ -4641,6 +4642,17 @@ I.trash=svg('<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>');
 function emlPrimary(r){const pc=S.data.contacts.find(c=>c.party==r.name),ok=v=>v&&v!='--'?v:'';return {name:ok(r.pc||(pc?pc.n:'')),email:ok(r.pcEmail||(pc?pc.email:''))}}
 const eSnap=c=>JSON.stringify([c.to,c.cc,c.bcc,c.subj,c.bodyHtml,c.atts.map(a=>a.name)]);
 const eDirty=()=>!!(S.eform&&S.eform.snap!==undefined&&eSnap(S.eform)!==S.eform.snap);
+function emcOpen(id,origin){ // Send Email from a Contact (View Contact header or row menu)
+ const r=find('contacts',id);if(!r)return;
+ if(r.branch!==S.lb){toast(MSG_BLOCK,'r');return}
+ if(!emlOK()){toast(MSG_PERM,'r');return}
+ getMode();
+ const em=r.email&&r.email!='--'?String(r.email).trim():'';
+ S.cform=null;S.aform=null;
+ const c=S.eform={leadId:'',src:'contact',origin,contactId:id,party:r.party,from:liUserEmail(ME),to:em?[em]:[],cc:[],bcc:[],noPc:!em,showCc:false,showBcc:false,tpl:'',subj:'',bodyHtml:'',atts:[],attErr:'',errs:{},saving:false,pk:null,cbId:null,cbQ:'',cbIdx:0,cbItems:[]};
+ S.drawer={type:'emailForm'};S.pop=null;render();
+ c.snap=eSnap(c);
+}
 function emlOpen(id){
  const r=find('leads',id);if(!r)return;
  if(r.branch!==S.lb){toast(MSG_BLOCK,'r');return}
@@ -4648,7 +4660,7 @@ function emlOpen(id){
  getMode();
  const p=emlPrimary(r);
  S.cform=null;S.aform=null;
- const c=S.eform={leadId:id,from:liUserEmail(ME),to:p.email?[p.email]:[],cc:[],bcc:[],noPc:!p.email,showCc:false,showBcc:false,tpl:'',subj:'',bodyHtml:'',atts:[],attErr:'',errs:{},saving:false,sdOpen:false,startLocal:'',pk:null,cbId:null,cbQ:'',cbIdx:0,cbItems:[]};
+ const c=S.eform={leadId:id,src:'lead',origin:'',contactId:'',party:'',from:liUserEmail(ME),to:p.email?[p.email]:[],cc:[],bcc:[],noPc:!p.email,showCc:false,showBcc:false,tpl:'',subj:'',bodyHtml:'',atts:[],attErr:'',errs:{},saving:false,cbId:null,cbQ:'',cbIdx:0,cbItems:[]};
  S.drawer={type:'emailForm'};S.pop=null;render();
  c.snap=eSnap(c);
 }
@@ -4711,7 +4723,8 @@ function emSan(html){const d=new DOMParser().parseFromString('<body>'+(html||'')
 function emBodyInfo(html){const s=emSan(html),d=document.createElement('div');d.innerHTML=s;const t=d.textContent.replace(/ /g,' ');return {empty:!t.trim()&&!d.querySelector('table'),len:t.length,html:s}}
 /* ---- template ---- */
 function emMerge(c,t,isHtml){
- const r=find('leads',c.leadId),p=emlPrimary(r),f=isHtml?esc:(x=>x),m={'{{Company}}':f(r.name),'{{Contact Name}}':f(p.name||'Sir/Madam'),'{{Owner}}':f(ME)};
+ let nm,cn;if(c.src=='contact'){const k=find('contacts',c.contactId)||{};nm=c.party;cn=k.n||''}else{const r=find('leads',c.leadId);nm=r.name;cn=emlPrimary(r).name}
+ const f=isHtml?esc:(x=>x),m={'{{Company}}':f(nm),'{{Contact Name}}':f(cn||'Sir/Madam'),'{{Owner}}':f(ME)};
  return Object.keys(m).reduce((a,k)=>a.split(k).join(m[k]),t);
 }
 function emTpl(v){
@@ -4764,7 +4777,7 @@ function edSnap(now){
  const f=()=>{EM.tmr=0;const ed=emEd();if(!ed)return;const h=ed.innerHTML;if(EM.hist[EM.hi]===h){edBtns();return}EM.hist=EM.hist.slice(0,EM.hi+1);EM.hist.push(h);if(EM.hist.length>100)EM.hist.shift();EM.hi=EM.hist.length-1;edBtns()};
  if(now)f();else{EM.tmr=setTimeout(f,350);edBtns()}
 }
-function edInit(){const ed=emEd();if(!ed)return;clearTimeout(EM.tmr);EM.tmr=0;EM.hist=[ed.innerHTML];EM.hi=0;EM.range=null;edPopClose();emMenu(false);edBtns()}
+function edInit(){const ed=emEd();if(!ed)return;clearTimeout(EM.tmr);EM.tmr=0;EM.hist=[ed.innerHTML];EM.hi=0;EM.range=null;edPopClose();edBtns()}
 function edRestore(){const ed=emEd();ed.innerHTML=EM.hist[EM.hi];ed.focus();const r=document.createRange();r.selectNodeContents(ed);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r);edSync();edBtns();edState()}
 function edUndo(){edSnap(true);if(EM.hi<=0)return;EM.hi--;edRestore()}
 function edRedo(){edSnap(true);if(EM.hi>=EM.hist.length-1)return;EM.hi++;edRestore()}
@@ -4958,57 +4971,6 @@ function edToolbar(){
   B('em_undo','Undo (Ctrl+Z)',emi('<path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/>'),'edUndo()')+B('em_redo','Redo (Ctrl+Y)',emi('<path d="M15 14l5-5-5-5"/><path d="M20 9H10a6 6 0 0 0 0 12h3"/>'),'edRedo()')+`</div>`;
 }
 const EM_TB=[['ra','Insert row above','Row ↑'],['rb','Insert row below','Row ↓'],['ca','Insert column left','Col ←'],['cb','Insert column right','Col →'],['dr','Delete row','Del row'],['dc','Delete column','Del col'],['dt','Delete table','Del table']];
-/* ---- footer: split Send, schedule menu, Schedule email dialog ---- */
-const emLocalNow=()=>formatInZone(nowMs(),devId(),'local');
-function emAddDays(ymd,n){const [y,m,d]=ymd.split('-').map(Number),t=new Date(Date.UTC(y,m-1,d+n));return t.getUTCFullYear()+'-'+String(t.getUTCMonth()+1).padStart(2,'0')+'-'+String(t.getUTCDate()).padStart(2,'0')}
-const emDow=ymd=>{const [y,m,d]=ymd.split('-').map(Number);return new Date(Date.UTC(y,m-1,d)).getUTCDay()};
-function emSchedOpts(){
- const today=emLocalNow().slice(0,10),tom=emAddDays(today,1),o=[{k:'tom',t:'Tomorrow at 9:00 AM',l:tom+'T09:00'}];
- if(emDow(tom)!=1)o.push({k:'mon',t:'Monday at 9:00 AM',l:emAddDays(today,(8-emDow(today))%7||7)+'T09:00'});
- o.push({k:'custom',t:'Custom time'});return o;
-}
-function emFmtLocal(l){
- const m=/^(\d+)-(\d+)-(\d+)T(\d+):(\d+)/.exec(l),dn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][emDow(`${m[1]}-${m[2]}-${m[3]}`)],mo=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m[2]-1],h=+m[4];
- return `${dn}, ${+m[3]} ${mo} ${m[1]}, ${h%12||12}:${m[5]} ${h>=12?'PM':'AM'}`;
-}
-function emMenuOut(e){const m=$('em_menu');if(m&&!m.contains(e.target)&&!(e.target.closest&&e.target.closest('#em_chev')))emMenu(false)}
-function emMenu(open){
- const m=$('em_menu');
- if(m||open===false){if(m)m.remove();document.removeEventListener('mousedown',emMenuOut,true);const cv=$('em_chev');if(cv)cv.setAttribute('aria-expanded','false');return}
- const c=S.eform;if(!c||c.saving)return;
- edPopClose();
- const o=emSchedOpts(),d=document.createElement('div');
- d.id='em_menu';d.className='emmenu';d.setAttribute('role','menu');d.setAttribute('aria-label','Schedule send');
- d.innerHTML=`<div class="emmh">Schedule send</div>`+o.map(x=>`<button type="button" class="emmi" role="menuitem" onclick="emPick('${x.k}')">${x.t}</button>`).join('');
- d.addEventListener('keydown',e=>{const it=[...d.querySelectorAll('.emmi')],i=it.indexOf(document.activeElement);if(e.key=='ArrowDown'){e.preventDefault();it[(i+1)%it.length].focus()}else if(e.key=='ArrowUp'){e.preventDefault();it[(i-1+it.length)%it.length].focus()}});
- document.querySelector('.dr.eml').appendChild(d);
- $('em_chev').setAttribute('aria-expanded','true');
- document.addEventListener('mousedown',emMenuOut,true);
- d.querySelector('.emmi').focus();
-}
-function emChevKey(e){if(e.key=='ArrowDown'||e.key=='ArrowUp'){e.preventDefault();if(!$('em_menu'))emMenu()}}
-function emPick(k){
- const o=emSchedOpts().find(x=>x.k==k);emMenu(false);
- if(!emCheck())return;
- const c=S.eform;
- if(k=='custom'){c.startLocal=emSchedOpts()[0].l;delete c.errs.start;c.pk=null;c.sdOpen=true;cfRender();return}
- emDo('Scheduled',o.l);
-}
-function emSdHTML(){
- return `<div class="emdbk" onclick="emSdClose()"><div class="emdlg" onclick="event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="em_sdt"><h3 id="em_sdt">Schedule email</h3><div class="fl"><label>Date and Time<span class="rq">*</span></label><div class="pcb" id="em_sdf">${startFieldHTML()}</div></div><div class="emdf"><button type="button" class="btn2 g" onclick="emSdClose()">Cancel</button><button type="button" class="btn2 p" onclick="emSdGo()">Schedule</button></div></div></div>`;
-}
-function emSyncPk(){const e=$('em_sdf');if(e){e.innerHTML=startFieldHTML();pkPlace()}}
-function emSdClose(){const c=S.eform;if(!c)return;c.sdOpen=false;c.pk=null;delete c.errs.start;cfRender()}
-function emSdGo(){
- const c=S.eform;if(!c)return;
- const l=normLocal(c.startLocal,devId()),t=Date.parse(wallClockToInstant(l,devId())),now=nowMs();
- if(t<=now)c.errs.start='Scheduled time must be in the future.';
- else if(t>now+120*864e5)c.errs.start='Scheduled time cannot be more than 120 days from now.';
- else delete c.errs.start;
- if(c.errs.start){const e=$('em_sdf');if(e)e.innerHTML=startFieldHTML();return}
- c.sdOpen=false;c.pk=null;
- emDo('Scheduled',l);
-}
 /* ---- validate + create ---- */
 function emCheck(){
  const c=S.eform;if(!c||c.saving)return false;
@@ -5020,19 +4982,19 @@ function emCheck(){
  if(!sj)c.errs.subj='Subject is required.';else if(sj.length>200)c.errs.subj='Subject cannot exceed 200 characters.';else delete c.errs.subj;
  const bi=emBodyInfo(c.bodyHtml);
  if(bi.empty)c.errs.body='Body is required.';else if(bi.len>5000)c.errs.body='Body cannot exceed 5000 characters.';else delete c.errs.body;
- if(EML_FKEYS.some(k=>c.errs[k])){emMenu(false);cfRender();const x=document.querySelector('.dr .bd .err');if(x)x.scrollIntoView({block:'center'});return false}
+ if(EML_FKEYS.some(k=>c.errs[k])){cfRender();const x=document.querySelector('.dr .bd .err');if(x)x.scrollIntoView({block:'center'});return false}
  return true;
 }
-function emGo(){if(emCheck())emDo('Sent')}
-function emBusy(b){['em_send','em_chev'].forEach(id=>{const e=$(id);if(e)e.disabled=b})}
-function emDo(mode,local){
+function emGo(){if(emCheck())emDo()}
+function emBusy(b){const e=$('em_send');if(e)e.disabled=b}
+function emDo(){
  const c=S.eform;if(!c||c.saving)return;
  c.saving=true;emBusy(true);
  setTimeout(()=>{ // simulated send, no API call
   if(S.eform!==c)return;
-  if(mode=='Sent'&&SPSET.emlFail){c.saving=false;emBusy(false);toast('Email could not be sent. Please try again.','r');return}
-  const r=find('leads',c.leadId),sub=c.subj.trim(),tz=devId(),now=nowMs();
-  const inst=mode=='Sent'?wallClockToInstant(formatInZone(now,tz,'local'),tz):wallClockToInstant(local,tz);
+  if(SPSET.emlFail){c.saving=false;emBusy(false);toast('Email could not be sent. Please try again.','r');return}
+  const ct=c.src=='contact',r=ct?{name:c.party}:find('leads',c.leadId),sub=c.subj.trim(),tz=devId(),now=nowMs(),mode='Sent';
+  const inst=wallClockToInstant(formatInZone(now,tz,'local'),tz);
   const all=[...c.to,...c.cc,...c.bcc].map(x=>x.trim().toLowerCase());
   const contacts=[];all.forEach(a=>S.data.contacts.forEach(x=>{if(x.party==r.name&&String(x.email||'').trim().toLowerCase()==a&&!contacts.includes(x.n))contacts.push(x.n)}));
   const team=[];all.forEach(a=>ownerList().forEach(n=>{if(n!=ME&&liUserEmail(n)==a&&!team.includes(n))team.push(n)}));
@@ -5041,35 +5003,33 @@ function emDo(mode,local){
   const st=stgDefault('actstatus')||'In Progress';
   if(!Array.isArray(S.data.emails))S.data.emails=[];
   const eid='EM'+(S.data.emails.length+1)+'x'+Math.floor(Math.random()*1e4),aid='T'+(S.data.acts.length+1)+'x'+Math.floor(Math.random()*1e4);
-  const em={id:eid,actId:aid,leadId:c.leadId,from:c.from,to:[...c.to],cc:[...c.cc],bcc:[...c.bcc],subject:sub,bodyHtml:emSan(c.bodyHtml),attachments:c.atts.map(a=>({name:a.name,size:a.size,type:a.type})),mode,createdBy:ME,createdInstant:new Date(now).toISOString()};
-  em[mode=='Sent'?'sentInstant':'scheduledInstant']=inst;
+  const em={id:eid,actId:aid,leadId:c.leadId||'',ctxSrc:ct?'contact':'lead',contactId:ct?c.contactId:'',from:c.from,to:[...c.to],cc:[...c.cc],bcc:[...c.bcc],subject:sub,bodyHtml:emSan(c.bodyHtml),attachments:c.atts.map(a=>({name:a.name,size:a.size,type:a.type})),mode,createdBy:ME,createdInstant:new Date(now).toISOString()};
+  em.sentInstant=inst;
   S.data.emails.unshift(em);
   S.data.acts.unshift({id:aid,branch:S.lb,creator:ME,title:sub,type:'Email',startInstant:inst,reminderOffsetMin:ro,reminderInstant:ri,party:r.name,opp:'',contacts,owner:ME,team,status:st,pri:'Medium',notes:'',dir:'Outgoing',purpose:'',outcome:'',subj:sub,link:'',mtype:'',durH:'',durM:'',auto:true,emailId:eid});
   remUpsert(S.data.acts[0]);
   S.drawer=null;S.eform=null;render();
-  toast(mode=='Sent'?'Email sent successfully.':'Email scheduled for '+emFmtLocal(local)+'.','g');
+  toast('Email sent successfully.','g');
  },500);
 }
 window.addEventListener('keydown',e=>{
- if(e.key!='Escape'||CA.open||!S.eform||!S.drawer||S.drawer.type!='emailForm'||S.eform.pk)return;
+ if(e.key!='Escape'||CA.open||!S.eform||!S.drawer||S.drawer.type!='emailForm')return;
  if(EM.pop){e.preventDefault();e.stopImmediatePropagation();edPopClose();const ed=emEd();if(ed&&EM.pop===null)ed.focus();return}
- if($('em_menu')){e.preventDefault();e.stopImmediatePropagation();emMenu(false);const cv=$('em_chev');if(cv)cv.focus();return}
- if(S.eform.sdOpen){e.preventDefault();e.stopImmediatePropagation();emSdClose()}
 },true);
 function emailFormHTML(){
  const c=S.eform,e=c.errs;
  const er=k=>`<div id="em_e_${k}">${e[k]?`<div class="err" role="alert">${esc(e[k])}</div>`:''}</div>`;
- const chipF=(k,req)=>`<div class="fl full"><div class="emlh"><label>${EML_LAB[k]}${req?'<span class="rq">*</span>':''}</label>${k=='to'?`<span class="emlx">${c.showCc?'':`<button type="button" class="emlk" onclick="emShow('cc')">Cc</button>`}${c.showBcc?'':`<button type="button" class="emlk" onclick="emShow('bcc')">Bcc</button>`}</span>`:''}</div><div class="inp mfd${e[k]?' bad':''}" id="em_b_${k}" onclick="$('em_in_${k}').focus()"><span id="em_c_${k}">${emChips(k)}</span><input id="em_in_${k}" autocomplete="off" aria-label="${EML_LAB[k]}" onkeydown="emKey(event,'${k}')" oninput="emChipIn(event,'${k}')" onpaste="emPaste(event,'${k}')" onblur="emAdd('${k}',this.value);this.value=''"></div>${k=='to'?`<div class="emh" id="em_h" style="${c.noPc&&!c.to.length?'':'display:none'}">This Lead has no Primary Contact email. Enter a recipient.</div>`:''}${er(k)}</div>`;
+ const chipF=(k,req)=>`<div class="fl full"><div class="emlh"><label>${EML_LAB[k]}${req?'<span class="rq">*</span>':''}</label>${k=='to'?`<span class="emlx">${c.showCc?'':`<button type="button" class="emlk" onclick="emShow('cc')">Cc</button>`}${c.showBcc?'':`<button type="button" class="emlk" onclick="emShow('bcc')">Bcc</button>`}</span>`:''}</div><div class="inp mfd${e[k]?' bad':''}" id="em_b_${k}" onclick="$('em_in_${k}').focus()"><span id="em_c_${k}">${emChips(k)}</span><input id="em_in_${k}" autocomplete="off" aria-label="${EML_LAB[k]}" onkeydown="emKey(event,'${k}')" oninput="emChipIn(event,'${k}')" onpaste="emPaste(event,'${k}')" onblur="emAdd('${k}',this.value);this.value=''"></div>${k=='to'?`<div class="emh" id="em_h" style="${c.noPc&&!c.to.length?'':'display:none'}">${c.src=='contact'?'This Contact has no email. Enter a recipient.':'This Lead has no Primary Contact email. Enter a recipient.'}</div>`:''}${er(k)}</div>`;
  return `<div class="drb" onclick="closeDrawer()"></div><div class="dr cfm eml"><div class="hd"><h2>Send Email</h2>${XR}</div><div class="bd"><div class="g2">
-  <div class="fl full"><label>From</label><input class="inp ro" disabled value="${esc(c.from)}"></div>
+  <div class="fl"><label>From</label><input class="inp ro" disabled value="${esc(c.from)}"></div>
+  <div class="fl"><label>Insert Template</label>${cbField('e_tpl')}</div>
   ${chipF('to',1)}
   ${c.showCc?chipF('cc',0):''}
   ${c.showBcc?chipF('bcc',0):''}
   <div class="fl full"><label>Subject<span class="rq">*</span></label><input class="inp${e.subj?' bad':''}" id="em_subj" value="${esc(c.subj)}" oninput="emSet('subj',this)">${er('subj')}</div>
   <div class="fl full"><label>Body<span class="rq">*</span></label><div class="emw${e.body?' bad':''}" id="em_w">${edToolbar()}<div class="emed" id="em_ed" contenteditable="true" role="textbox" aria-multiline="true" aria-label="Body" data-ph="Enter your message" oninput="edInput()" onkeydown="edKey(event)" onpaste="edPaste(event)" onclick="edClick(event)" onkeyup="edState()" onfocus="document.execCommand('defaultParagraphSeparator',false,'p')">${emSan(c.bodyHtml)}</div><div class="emtbar" id="em_tbar" style="display:none">${EM_TB.map(x=>`<button type="button" class="emb emtx" title="${x[1]}" aria-label="${x[1]}" onmousedown="event.preventDefault()" onclick="edTbl('${x[0]}')">${x[2]}</button>`).join('')}</div></div>${er('body')}</div>
   <div class="fl full" id="em_att">${emAttHTML()}</div><input type="file" id="em_file" multiple hidden onchange="emFiles(this)">
-  <div class="fl full"><label>Insert Template</label>${cbField('e_tpl')}</div>
- </div></div><div class="ft"><button class="btn2 g" onclick="closeDrawer()">Cancel</button><div class="emsplit"><button class="btn2 p" id="em_send" ${c.saving?'disabled':''} onclick="emGo()">Send</button><button class="btn2 p emchev" id="em_chev" ${c.saving?'disabled':''} aria-label="Schedule send" aria-haspopup="menu" aria-expanded="false" onkeydown="emChevKey(event)" onclick="emMenu()">${emi('<path d="M6 9l6 6 6-6"/>')}</button></div></div>${c.sdOpen?emSdHTML():''}</div>`;
+ </div></div><div class="ft"><button class="btn2 g" onclick="closeDrawer()">Cancel</button><button class="btn2 p" id="em_send" ${c.saving?'disabled':''} onclick="emGo()">Send</button></div></div>`;
 }
 /* ============ Confirm Action: unsaved changes in the Create / Edit / Duplicate drawers ============ */
 const CA={open:false,ret:null};
